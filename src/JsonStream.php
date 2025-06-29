@@ -18,17 +18,7 @@ use Nyholm\Psr7\Stream;
  */
 final class JsonStream extends Stream implements JsonStreamInterface
 {
-    /**
-     * @var resource The underlying stream resource containing the JSON-encoded data.
-     *               This resource MUST be a writable PHP stream.
-     */
-    private $stream;
-
-    /**
-     * @var mixed The original payload data prior to JSON encoding.
-     *            This MAY be any JSON-encodable PHP type, excluding resources.
-     */
-    private mixed $payload;
+    public const ENCODING_OPTIONS = JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE;
 
     /**
      * Constructs a new JsonStream instance with the provided payload.
@@ -39,11 +29,14 @@ final class JsonStream extends Stream implements JsonStreamInterface
      * @param mixed $payload The data to encode as JSON. MUST be JSON-encodable. Resources are explicitly prohibited.
      * @param int $encodingOptions Optional JSON encoding flags as defined by {@see json_encode()}. Defaults to 0.
      */
-    public function __construct(mixed $payload, private int $encodingOptions = 0)
-    {
-        $this->setPayload($payload);
+    public function __construct(
+        private mixed $payload,
+        private int $encodingOptions = self::ENCODING_OPTIONS
+    ) {
+        parent::__construct(fopen('php://temp', 'wb+'));
 
-        parent::__construct($this->stream);
+        $this->write($this->jsonEncode($this->payload, $this->encodingOptions));
+        $this->rewind();
     }
 
     /**
@@ -71,55 +64,13 @@ final class JsonStream extends Stream implements JsonStreamInterface
         return json_encode($data, $encodingOptions | JSON_THROW_ON_ERROR);
     }
 
-    /**
-     * Sets the payload and updates the underlying stream with its JSON-encoded form.
-     *
-     * This method SHALL encode the payload as JSON, write it to a temporary stream, and rewind the stream pointer.
-     * It also retains the original decoded payload for later access.
-     *
-     * @param mixed $data The data to encode as JSON. MUST be JSON-encodable.
-     * @return self The current instance for fluent chaining.
-     *
-     * @throws \InvalidArgumentException If the data contains a resource.
-     * @throws \JsonException If JSON encoding fails.
-     */
-    private function setPayload(mixed $data): self
-    {
-        $contents = $this->jsonEncode($data, $this->encodingOptions);
-
-        $this->payload = $data;
-        $this->stream = fopen('php://temp', 'wb+');
-
-        $this->write($contents);
-        $this->rewind();
-
-        return $this;
-    }
-
-    /**
-     * Retrieves the decoded payload previously provided to the stream.
-     *
-     * @return mixed The original decoded payload, which MAY be of any JSON-encodable PHP type.
-     */
     public function getPayload(): mixed
     {
         return $this->payload;
     }
 
-    /**
-     * Returns a new instance with the updated payload encoded as JSON.
-     *
-     * This method SHALL NOT modify the current instance. It MUST return a cloned instance with the new payload
-     * written to its stream.
-     *
-     * @param mixed $data The new data to encode as JSON. MUST be JSON-encodable.
-     * @return self A new instance with the updated JSON payload.
-     *
-     * @throws \InvalidArgumentException If the data contains a resource.
-     * @throws \JsonException If JSON encoding fails.
-     */
-    public function withPayload(mixed $data): self
+    public function withPayload(mixed $payload): self
     {
-        return (clone $this)->setPayload($data);
+        return new self($payload);
     }
 }
