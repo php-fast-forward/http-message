@@ -11,19 +11,12 @@ final class JsonResponse extends Response implements JsonResponseInterface
 {
     public function __construct(
         mixed $payload = [],
-        StatusCode $status = StatusCode::OK,
+        string $charset = 'utf-8'
     ) {
         parent::__construct(
-            status: $status->value,
-            headers: ['Content-Type' => 'application/json; charset=utf-8'],
-            body: $this->createBody($payload),
-            reason: $status->reasonPhrase(),
+            headers: ['Content-Type' => 'application/json; charset=' . $charset],
+            body: new JsonStream($payload),
         );
-    }
-
-    private function createBody(mixed $payload): JsonStreamInterface
-    {
-        return new JsonStream($payload);
     }
 
     public function getPayload(): mixed
@@ -33,6 +26,6 @@ final class JsonResponse extends Response implements JsonResponseInterface
 
     public function withPayload(mixed $payload): self
     {
-        return $this->withBody($this->createBody($payload));
+        return $this->withBody($this->getBody()->withPayload($payload));
     }
 }

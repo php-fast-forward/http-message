@@ -16,33 +16,63 @@ namespace FastForward\Http\Message;
  */
 enum RequestMethod: string
 {
-    /** @var string The HEAD method requests the headers for a given resource without the response body. */
-    case HEAD = 'HEAD';
+    /** The HEAD method requests the headers for a given resource without the response body. */
+    case Head = 'HEAD';
 
-    /** @var string The GET method requests a representation of the specified resource. It MUST NOT have side-effects. */
-    case GET = 'GET';
+    /** The GET method requests a representation of the specified resource. It MUST NOT have side-effects. */
+    case Get = 'GET';
 
-    /** @var string The POST method submits data to be processed, often causing a change in state or side-effects. */
-    case POST = 'POST';
+    /** The POST method submits data to be processed, often causing a change in state or side-effects. */
+    case Post = 'POST';
 
-    /** @var string The PUT method replaces the target resource with the request payload. */
-    case PUT = 'PUT';
+    /** The PUT method replaces the target resource with the request payload. */
+    case Put = 'PUT';
 
-    /** @var string The PATCH method applies partial modifications to the target resource. */
-    case PATCH = 'PATCH';
+    /** The PATCH method applies partial modifications to the target resource. */
+    case Patch = 'PATCH';
 
-    /** @var string The DELETE method removes the specified resource. */
-    case DELETE = 'DELETE';
+    /** The DELETE method removes the specified resource. */
+    case Delete = 'DELETE';
 
-    /** @var string The PURGE method requests that a cached resource be removed, often used with proxy servers. */
-    case PURGE = 'PURGE';
+    /** The PURGE method requests that a cached resource be removed, often used with proxy servers. */
+    case Purge = 'PURGE';
 
-    /** @var string The OPTIONS method describes the communication options for the target resource. */
-    case OPTIONS = 'OPTIONS';
+    /** The OPTIONS method describes the communication options for the target resource. */
+    case Options = 'OPTIONS';
 
-    /** @var string The TRACE method performs a message loop-back test along the path to the target resource. */
-    case TRACE = 'TRACE';
+    /** The TRACE method performs a message loop-back test along the path to the target resource. */
+    case Trace = 'TRACE';
 
-    /** @var string The CONNECT method establishes a tunnel to the target resource, often used with HTTPS proxies. */
-    case CONNECT = 'CONNECT';
+    /** The CONNECT method establishes a tunnel to the target resource, often used with HTTPS proxies. */
+    case Connect = 'CONNECT';
+
+    /**
+     * Returns true if the method is considered safe (does not modify server state).
+     *
+     * @return bool
+     */
+    public function isSafe(): bool
+    {
+        return in_array($this, [self::Get, self::Head, self::Options, self::Trace], true);
+    }
+
+    /**
+     * Returns true if the method is idempotent (multiple identical requests have the same effect as a single one).
+     *
+     * @return bool
+     */
+    public function isIdempotent(): bool
+    {
+        return in_array($this, [self::Get, self::Head, self::Put, self::Delete, self::Options, self::Trace], true);
+    }
+
+    /**
+     * Returns true if the method is considered cacheable by default.
+     *
+     * @return bool
+     */
+    public function isCacheable(): bool
+    {
+        return in_array($this, [self::Get, self::Head], true);
+    }
 }

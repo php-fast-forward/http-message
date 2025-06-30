@@ -1,0 +1,58 @@
+{
+    "name": "fast-forward/http-message",
+    "description": "Fast Forward PSR-7 HTTP Message utility classes",
+    "license": "MIT",
+    "type": "library",
+    "authors": [
+        {
+            "name": "Felipe Sayão Lobato Abreu",
+            "email": "github@mentordosnerds.com"
+        }
+    ],
+    "homepage": "https://github.com/php-fast-forward",
+    "support": {
+        "issues": "https://github.com/php-fast-forward/http-message/issues",
+        "source": "https://github.com/php-fast-forward/http-message"
+    },
+    "require": {
+        "php": "^8.2",
+        "nyholm/psr7": "^1.8",
+        "psr/http-message": "^2.0"
+    },
+    "require-dev": {
+        "coisa/php-cs-fixer": "^2.1",
+        "phpspec/prophecy-phpunit": "^2.3",
+        "phpunit/phpunit": "^9.6 || ^10.5 || ^11.5"
+    },
+    "minimum-stability": "stable",
+    "autoload": {
+        "psr-4": {
+            "FastForward\\Http\\Message\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "FastForward\\Http\\Message\\Tests\\": "tests/"
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-main": "1.x-dev"
+        }
+    },
+    "scripts": {
+        "cs-check": "php-cs-fixer fix --dry-run --diff",
+        "cs-fix": "php-cs-fixer fix",
+        "mutation-testing": "infection --threads=4",
+        "pre-commit": [
+            "@cs-check",
+            "@static-analysis",
+            "@tests"
+        ],
+        "static-analysis": "phpstan analyse --level 5 src",
+        "tests": "phpunit --testdox"
+    }
+}
