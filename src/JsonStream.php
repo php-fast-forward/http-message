@@ -20,43 +20,79 @@ use Nyholm\Psr7\Stream;
 /**
  * Class JsonStream.
  *
- * Extends Nyholm's PSR-7 Stream implementation to provide JSON-specific stream functionality.
- * This class SHALL encapsulate a JSON-encoded payload within a PHP stream, while retaining the original
- * payload in a decoded form for convenient access.
+ * Provides a JSON-specific stream implementation, extending Nyholm's PSR-7 Stream.
+ * This class SHALL encapsulate a JSON-encoded payload within an in-memory PHP stream,
+ * while retaining the original decoded payload for convenient retrieval.
  *
- * Implementations MUST properly handle JSON encoding errors and enforce the prohibition of resource types
- * within JSON payloads.
+ * Implementations of this class MUST properly handle JSON encoding errors and SHALL explicitly
+ * prohibit the inclusion of resource types within the JSON payload.
  *
  * @package FastForward\Http\Message
  */
 final class JsonStream extends Stream implements JsonStreamInterface
 {
+    /**
+     * JSON encoding flags to be applied by default.
+     *
+     * The options JSON_THROW_ON_ERROR, JSON_UNESCAPED_SLASHES, and JSON_UNESCAPED_UNICODE
+     * SHALL be applied to enforce strict error handling and produce readable JSON output.
+     *
+     * @var int
+     */
     public const ENCODING_OPTIONS = JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE;
+
+    /**
+     * @var mixed The decoded payload provided to the stream. This MUST be JSON-encodable and MUST NOT contain resources.
+     */
+    private mixed $payload = [];
+
+    /**
+     * @var int The JSON encoding options to be applied. Defaults to self::ENCODING_OPTIONS.
+     */
+    private int $encodingOptions = self::ENCODING_OPTIONS;
 
     /**
      * Constructs a new JsonStream instance with the provided payload.
      *
-     * The payload SHALL be JSON-encoded and written to an in-memory PHP stream. The original payload is retained
-     * in decoded form for later retrieval via {@see getPayload()}.
+     * The payload SHALL be JSON-encoded and written to an in-memory stream. The original payload is retained
+     * in its decoded form for later access via getPayload().
      *
      * @param mixed $payload         The data to encode as JSON. MUST be JSON-encodable. Resources are explicitly prohibited.
-     * @param int   $encodingOptions Optional JSON encoding flags as defined by {@see json_encode()}. Defaults to 0.
+     * @param int   $encodingOptions Optional JSON encoding flags. If omitted, ENCODING_OPTIONS will be applied.
      */
-    public function __construct(
-        private mixed $payload = [],
-        private int $encodingOptions = self::ENCODING_OPTIONS
-    ) {
+    public function __construct(mixed $payload = [], int $encodingOptions = self::ENCODING_OPTIONS)
+    {
+        $this->payload         = $payload;
+        $this->encodingOptions = $encodingOptions;
+
         parent::__construct(fopen('php://temp', 'wb+'));
 
         $this->write($this->jsonEncode($this->payload, $this->encodingOptions));
         $this->rewind();
     }
 
+    /**
+     * Retrieves the decoded payload associated with the stream.
+     *
+     * This method SHALL return the original JSON-encodable payload provided during construction or via withPayload().
+     *
+     * @return mixed the decoded payload
+     */
     public function getPayload(): mixed
     {
         return $this->payload;
     }
 
+    /**
+     * Returns a new instance of the stream with the specified payload.
+     *
+     * This method MUST return a new JsonStream instance with the body replaced by a stream
+     * containing the JSON-encoded form of the new payload. The current instance SHALL remain unchanged.
+     *
+     * @param mixed $payload the new JSON-encodable payload
+     *
+     * @return self a new JsonStream instance containing the updated payload
+     */
     public function withPayload(mixed $payload): self
     {
         return new self($payload);
@@ -65,11 +101,11 @@ final class JsonStream extends Stream implements JsonStreamInterface
     /**
      * Encodes the given data as JSON, enforcing proper error handling.
      *
-     * If the provided data is a resource, this method SHALL throw an {@see \InvalidArgumentException} as resources
-     * cannot be represented in JSON format.
+     * If the provided data is a resource, this method SHALL throw an \InvalidArgumentException,
+     * as resource types are not supported by JSON.
      *
      * @param mixed $data            the data to encode as JSON
-     * @param int   $encodingOptions JSON encoding options, combined with JSON_THROW_ON_ERROR
+     * @param int   $encodingOptions JSON encoding options to apply. JSON_THROW_ON_ERROR will always be enforced.
      *
      * @return string the JSON-encoded string representation of the data
      *
@@ -79,10 +115,10 @@ final class JsonStream extends Stream implements JsonStreamInterface
     private function jsonEncode(mixed $data, int $encodingOptions): string
     {
         if (\is_resource($data)) {
-            throw new \InvalidArgumentException('Cannot JSON encode resources');
+            throw new \InvalidArgumentException('Cannot JSON encode resources.');
         }
 
-        // Clear json_last_error()
+        // Reset potential previous errors
         json_encode(null);
 
         return json_encode($data, $encodingOptions | JSON_THROW_ON_ERROR);

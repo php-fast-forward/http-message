@@ -18,35 +18,34 @@ namespace FastForward\Http\Message;
 /**
  * Interface PayloadAwareInterface.
  *
- * Provide functionality for JSON payload handling.
+ * Defines functionality for objects that encapsulate and manage a payload.
+ * Implementations of this interface MUST provide immutable methods for accessing and replacing the payload.
+ * The payload MAY be of any type supported by the implementation, including arrays, objects, scalars, or null.
  *
  * @package FastForward\Http\Message
  */
 interface PayloadAwareInterface
 {
     /**
-     * Retrieves the decoded JSON payload from the stream.
+     * Retrieves the payload contained within the object.
      *
-     * This method MUST return the decoded JSON payload as a native PHP type. The returned type MAY vary depending on
-     * the structure of the JSON content (e.g., array, object, int, float, string, bool, or null).
+     * This method MUST return the payload as originally provided or modified.
+     * The returned type MAY vary depending on the structure of the payload (e.g., array, object, scalar, or null).
      *
-     * @return mixed the decoded JSON payload, which MAY be of any type, including array, object, scalar, or null
+     * @return mixed the payload, which MAY be of any type including array, object, scalar, or null
      */
     public function getPayload(): mixed;
 
     /**
-     * Returns a new instance with the provided payload encoded as JSON.
+     * Returns a new instance with the specified payload.
      *
-     * This method MUST NOT modify the existing instance; instead, it SHALL return a new instance with the updated
-     * JSON payload written to the underlying stream.
+     * This method MUST NOT modify the current instance. It SHALL return a new instance with the updated payload.
+     * The payload MAY be of any type supported by the implementation. Implementations MAY throw exceptions if
+     * constraints on the payload type are violated.
      *
-     * The provided data MUST be JSON-encodable. If encoding fails, the method MAY throw an exception as defined
-     * by the implementation.
+     * @param mixed $payload the new payload to set in the instance
      *
-     * @param mixed $payload The data to encode as JSON and set as the stream's payload. This MAY be of any type
-     *                       supported by json_encode.
-     *
-     * @return self a new instance with the updated JSON payload
+     * @return self a new instance with the updated payload
      */
     public function withPayload(mixed $payload): self;
 }
