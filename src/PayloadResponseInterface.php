@@ -18,11 +18,11 @@ namespace FastForward\Http\Message;
 use Psr\Http\Message\ResponseInterface;
 
 /**
- * Interface JsonResponseInterface.
+ * Interface PayloadResponseInterface.
  *
- * Defines the contract for JSON-specific HTTP response implementations.
- * Implementations of this interface MUST provide access to a JSON payload and comply with PSR-7 ResponseInterface.
+ * Defines the contract for payload-specific HTTP response implementations.
+ * Implementations of this interface MUST provide access to a payload and comply with PSR-7 ResponseInterface.
  *
- * This interface SHALL be used to identify responses intended to transmit JSON-encoded payloads with proper headers.
+ * This interface SHALL be used to identify responses intended to transmit payloads with proper headers.
  */
-interface JsonResponseInterface extends ResponseInterface, PayloadAwareInterface, PayloadImmutableInterface {}
+interface PayloadResponseInterface extends PayloadAwareInterface, PayloadImmutableInterface, ResponseInterface {}

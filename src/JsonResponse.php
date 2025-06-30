@@ -24,9 +24,9 @@ use Nyholm\Psr7\Response;
  * This class MUST be used when returning JSON payloads over HTTP responses.
  * It automatically sets the 'Content-Type' header to 'application/json' with the specified charset.
  *
- * @method JsonStreamInterface getBody() Retrieves the response body as a JSON stream.
+ * @method PayloadStreamInterface getBody() Retrieves the response body as a JSON stream.
  */
-final class JsonResponse extends Response implements JsonResponseInterface
+final class JsonResponse extends Response implements PayloadResponseInterface
 {
     /**
      * Constructs a new JsonResponse instance with an optional payload and charset.

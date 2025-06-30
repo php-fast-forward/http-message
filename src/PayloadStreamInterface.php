@@ -18,11 +18,11 @@ namespace FastForward\Http\Message;
 use Psr\Http\Message\StreamInterface;
 
 /**
- * Interface JsonStreamInterface.
+ * Interface PayloadStreamInterface.
  *
- * Extends the PSR-7 StreamInterface to provide additional functionality for JSON payload handling.
- * Implementations of this interface MUST support both standard stream operations and structured JSON payload manipulation.
+ * Extends the PSR-7 StreamInterface to provide additional functionality for payload handling.
+ * Implementations of this interface MUST support both standard stream operations and structured payload manipulation.
  *
  * @package FastForward\Http\Message
  */
-interface JsonStreamInterface extends StreamInterface, PayloadAwareInterface, PayloadImmutableInterface {}
+interface PayloadStreamInterface extends PayloadAwareInterface, PayloadImmutableInterface, StreamInterface {}

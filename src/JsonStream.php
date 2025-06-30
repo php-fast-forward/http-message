@@ -29,7 +29,7 @@ use Nyholm\Psr7\Stream;
  *
  * @package FastForward\Http\Message
  */
-final class JsonStream extends Stream implements JsonStreamInterface
+final class JsonStream extends Stream implements PayloadStreamInterface
 {
     /**
      * JSON encoding flags to be applied by default.

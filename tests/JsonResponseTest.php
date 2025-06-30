@@ -16,9 +16,9 @@ declare(strict_types=1);
 namespace FastForward\Http\Message\Tests;
 
 use FastForward\Http\Message\JsonResponse;
-use FastForward\Http\Message\JsonResponseInterface;
 use FastForward\Http\Message\JsonStream;
-use FastForward\Http\Message\JsonStreamInterface;
+use FastForward\Http\Message\PayloadResponseInterface;
+use FastForward\Http\Message\PayloadStreamInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
@@ -32,7 +32,7 @@ final class JsonResponseTest extends TestCase
 {
     public function testClassImplementsJsonResponseInterface(): void
     {
-        self::assertInstanceOf(JsonResponseInterface::class, new JsonResponse());
+        self::assertInstanceOf(PayloadResponseInterface::class, new JsonResponse());
     }
 
     public function testConstructorWillInitializeWithPayload(): void
@@ -42,7 +42,7 @@ final class JsonResponseTest extends TestCase
         $response = new JsonResponse($payload);
 
         self::assertSame(['success' => true], $response->getPayload());
-        self::assertInstanceOf(JsonStreamInterface::class, $response->getBody());
+        self::assertInstanceOf(PayloadStreamInterface::class, $response->getBody());
         self::assertSame('application/json; charset=utf-8', $response->getHeaderLine('Content-Type'));
     }
 
