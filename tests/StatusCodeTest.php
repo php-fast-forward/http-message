@@ -2,6 +2,17 @@
 
 declare(strict_types=1);
 
+/**
+ * This file is part of php-fast-forward/http-message.
+ *
+ * This source file is subject to the license bundled
+ * with this source code in the file LICENSE.
+ *
+ * @link      https://github.com/php-fast-forward/http-message
+ * @copyright Copyright (c) 2025 Felipe Sayão Lobato Abreu <github@mentordosnerds.com>
+ * @license   https://opensource.org/licenses/MIT MIT License
+ */
+
 namespace FastForward\Http\Message\Tests;
 
 use FastForward\Http\Message\StatusCode;
@@ -9,57 +20,60 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @internal
+ */
 #[CoversClass(StatusCode::class)]
 final class StatusCodeTest extends TestCase
 {
     #[DataProvider('provideStatusCodes')]
     public function testGetCodeWillReturnExpectedValue(StatusCode $statusCode, int $expected): void
     {
-        $this->assertSame($expected, $statusCode->getCode());
+        self::assertSame($expected, $statusCode->getCode());
     }
 
     #[DataProvider('provideReasonPhrases')]
     public function testGetReasonPhraseWillReturnExpectedValue(StatusCode $statusCode, string $expected): void
     {
-        $this->assertSame($expected, $statusCode->getReasonPhrase());
+        self::assertSame($expected, $statusCode->getReasonPhrase());
     }
 
     #[DataProvider('provideCategories')]
     public function testGetCategoryWillReturnExpectedValue(StatusCode $statusCode, string $expected): void
     {
-        $this->assertSame($expected, $statusCode->getCategory());
+        self::assertSame($expected, $statusCode->getCategory());
     }
 
     #[DataProvider('provideInformationalStatusCodes')]
     public function testIsInformationalWillReturnTrue(StatusCode $statusCode): void
     {
-        $this->assertTrue($statusCode->isInformational());
+        self::assertTrue($statusCode->isInformational());
     }
 
     #[DataProvider('provideSuccessStatusCodes')]
     public function testIsSuccessWillReturnTrue(StatusCode $statusCode): void
     {
-        $this->assertTrue($statusCode->isSuccess());
+        self::assertTrue($statusCode->isSuccess());
     }
 
     #[DataProvider('provideRedirectionStatusCodes')]
     public function testIsRedirectionWillReturnTrue(StatusCode $statusCode): void
     {
-        $this->assertTrue($statusCode->isRedirection());
+        self::assertTrue($statusCode->isRedirection());
     }
 
     #[DataProvider('provideClientErrorStatusCodes')]
     public function testIsClientErrorWillReturnTrue(StatusCode $statusCode): void
     {
-        $this->assertTrue($statusCode->isClientError());
-        $this->assertTrue($statusCode->isError());
+        self::assertTrue($statusCode->isClientError());
+        self::assertTrue($statusCode->isError());
     }
 
     #[DataProvider('provideServerErrorStatusCodes')]
     public function testIsServerErrorWillReturnTrue(StatusCode $statusCode): void
     {
-        $this->assertTrue($statusCode->isServerError());
-        $this->assertTrue($statusCode->isError());
+        self::assertTrue($statusCode->isServerError());
+        self::assertTrue($statusCode->isError());
     }
 
     public static function provideStatusCodes(): array

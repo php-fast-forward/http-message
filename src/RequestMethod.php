@@ -1,9 +1,22 @@
 <?php
 
+declare(strict_types=1);
+
+/**
+ * This file is part of php-fast-forward/http-message.
+ *
+ * This source file is subject to the license bundled
+ * with this source code in the file LICENSE.
+ *
+ * @link      https://github.com/php-fast-forward/http-message
+ * @copyright Copyright (c) 2025 Felipe Sayão Lobato Abreu <github@mentordosnerds.com>
+ * @license   https://opensource.org/licenses/MIT MIT License
+ */
+
 namespace FastForward\Http\Message;
 
 /**
- * Enum RequestMethod
+ * Enum RequestMethod.
  *
  * Represents the set of valid HTTP request methods as defined by the IETF RFC 7231 and related specifications.
  * This enum SHALL be used to strictly define supported request methods within HTTP client and server implementations.
@@ -48,31 +61,25 @@ enum RequestMethod: string
 
     /**
      * Returns true if the method is considered safe (does not modify server state).
-     *
-     * @return bool
      */
     public function isSafe(): bool
     {
-        return in_array($this, [self::Get, self::Head, self::Options, self::Trace], true);
+        return \in_array($this, [self::Get, self::Head, self::Options, self::Trace], true);
     }
 
     /**
      * Returns true if the method is idempotent (multiple identical requests have the same effect as a single one).
-     *
-     * @return bool
      */
     public function isIdempotent(): bool
     {
-        return in_array($this, [self::Get, self::Head, self::Put, self::Delete, self::Options, self::Trace], true);
+        return \in_array($this, [self::Get, self::Head, self::Put, self::Delete, self::Options, self::Trace], true);
     }
 
     /**
      * Returns true if the method is considered cacheable by default.
-     *
-     * @return bool
      */
     public function isCacheable(): bool
     {
-        return in_array($this, [self::Get, self::Head], true);
+        return \in_array($this, [self::Get, self::Head], true);
     }
 }

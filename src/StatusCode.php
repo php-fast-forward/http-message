@@ -1,9 +1,22 @@
 <?php
 
+declare(strict_types=1);
+
+/**
+ * This file is part of php-fast-forward/http-message.
+ *
+ * This source file is subject to the license bundled
+ * with this source code in the file LICENSE.
+ *
+ * @link      https://github.com/php-fast-forward/http-message
+ * @copyright Copyright (c) 2025 Felipe Sayão Lobato Abreu <github@mentordosnerds.com>
+ * @license   https://opensource.org/licenses/MIT MIT License
+ */
+
 namespace FastForward\Http\Message;
 
 /**
- * Enum StatusCode
+ * Enum StatusCode.
  *
  * Defines HTTP status codes in accordance with the IETF RFC 9110 and related specifications.
  * This enum provides a structured representation of common HTTP response codes, grouped by their respective categories:
@@ -222,7 +235,7 @@ enum StatusCode: int
     /**
      * Returns the numeric HTTP status code.
      *
-     * @return int The numeric status code as defined by the HTTP specification.
+     * @return int the numeric status code as defined by the HTTP specification
      */
     public function getCode(): int
     {
@@ -234,7 +247,7 @@ enum StatusCode: int
      *
      * The description is derived from the enum name, replacing underscores with spaces and capitalizing each word.
      *
-     * @return string The reason phrase corresponding to the status code.
+     * @return string the reason phrase corresponding to the status code
      */
     public function getReasonPhrase(): string
     {
@@ -250,8 +263,6 @@ enum StatusCode: int
      * - 3: Redirection
      * - 4: Client Error
      * - 5: Server Error
-     *
-     * @return string
      */
     public function getCategory(): string
     {
@@ -266,58 +277,46 @@ enum StatusCode: int
 
     /**
      * Returns true if the status code is informational (1xx).
-     *
-     * @return bool
      */
     public function isInformational(): bool
     {
-        return intdiv($this->value, 100) === 1;
+        return 1 === intdiv($this->value, 100);
     }
 
     /**
      * Returns true if the status code indicates success (2xx).
-     *
-     * @return bool
      */
     public function isSuccess(): bool
     {
-        return intdiv($this->value, 100) === 2;
+        return 2 === intdiv($this->value, 100);
     }
 
     /**
      * Returns true if the status code indicates redirection (3xx).
-     *
-     * @return bool
      */
     public function isRedirection(): bool
     {
-        return intdiv($this->value, 100) === 3;
+        return 3 === intdiv($this->value, 100);
     }
 
     /**
      * Returns true if the status code indicates a client error (4xx).
-     *
-     * @return bool
      */
     public function isClientError(): bool
     {
-        return intdiv($this->value, 100) === 4;
+        return 4 === intdiv($this->value, 100);
     }
 
     /**
      * Returns true if the status code indicates a server error (5xx).
-     *
-     * @return bool
      */
     public function isServerError(): bool
     {
-        return intdiv($this->value, 100) === 5;
+        return 5 === intdiv($this->value, 100);
     }
 
     /**
      * Returns true if the status code indicates any type of error (client or server).
-     *
-     * @return bool
      */
     public function isError(): bool
     {
