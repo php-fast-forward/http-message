@@ -25,4 +25,4 @@ use Psr\Http\Message\StreamInterface;
  *
  * @package FastForward\Http\Message
  */
-interface JsonStreamInterface extends StreamInterface, PayloadAwareInterface {}
+interface JsonStreamInterface extends StreamInterface, PayloadAwareInterface, PayloadImmutableInterface {}

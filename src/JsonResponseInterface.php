@@ -25,4 +25,4 @@ use Psr\Http\Message\ResponseInterface;
  *
  * This interface SHALL be used to identify responses intended to transmit JSON-encoded payloads with proper headers.
  */
-interface JsonResponseInterface extends ResponseInterface, PayloadAwareInterface {}
+interface JsonResponseInterface extends ResponseInterface, PayloadAwareInterface, PayloadImmutableInterface {}

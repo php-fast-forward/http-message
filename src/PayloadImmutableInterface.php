@@ -23,16 +23,21 @@ namespace FastForward\Http\Message;
  * The payload MAY be of any type supported by the implementation, including arrays, objects, scalars, or null.
  *
  * @package FastForward\Http\Message
+ *
+ * @internal
  */
-interface PayloadAwareInterface
+interface PayloadImmutableInterface
 {
     /**
-     * Retrieves the payload contained within the object.
+     * Returns a new instance with the specified payload.
      *
-     * This method MUST return the payload as originally provided or modified.
-     * The returned type MAY vary depending on the structure of the payload (e.g., array, object, scalar, or null).
+     * This method MUST NOT modify the current instance. It SHALL return a new instance with the updated payload.
+     * The payload MAY be of any type supported by the implementation. Implementations MAY throw exceptions if
+     * constraints on the payload type are violated.
      *
-     * @return mixed the payload, which MAY be of any type including array, object, scalar, or null
+     * @param mixed $payload the new payload to set in the instance
+     *
+     * @return self a new instance with the updated payload
      */
-    public function getPayload(): mixed;
+    public function withPayload(mixed $payload): self;
 }

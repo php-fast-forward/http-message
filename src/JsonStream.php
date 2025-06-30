@@ -47,9 +47,9 @@ final class JsonStream extends Stream implements JsonStreamInterface
     private mixed $payload = [];
 
     /**
-     * @var int The JSON encoding options to be applied. Defaults to self::ENCODING_OPTIONS.
+     * @var int the JSON encoding options to be applied
      */
-    private int $encodingOptions = self::ENCODING_OPTIONS;
+    private int $encodingOptions;
 
     /**
      * Constructs a new JsonStream instance with the provided payload.
@@ -95,7 +95,7 @@ final class JsonStream extends Stream implements JsonStreamInterface
      */
     public function withPayload(mixed $payload): self
     {
-        return new self($payload);
+        return new self($payload, $this->encodingOptions);
     }
 
     /**
