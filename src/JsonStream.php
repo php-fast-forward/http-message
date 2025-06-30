@@ -30,7 +30,7 @@ final class JsonStream extends Stream implements JsonStreamInterface
      * @param int $encodingOptions Optional JSON encoding flags as defined by {@see json_encode()}. Defaults to 0.
      */
     public function __construct(
-        private mixed $payload,
+        private mixed $payload = [],
         private int $encodingOptions = self::ENCODING_OPTIONS
     ) {
         parent::__construct(fopen('php://temp', 'wb+'));
