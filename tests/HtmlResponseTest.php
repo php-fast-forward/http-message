@@ -15,6 +15,7 @@ declare(strict_types=1);
 
 namespace FastForward\Http\Message\Tests;
 
+use FastForward\Http\Message\Header\ContentType;
 use FastForward\Http\Message\HtmlResponse;
 use FastForward\Http\Message\StatusCode;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -36,17 +37,25 @@ final class HtmlResponseTest extends TestCase
 
         self::assertSame(StatusCode::Ok->value, $response->getStatusCode());
         self::assertSame(StatusCode::Ok->getReasonPhrase(), $response->getReasonPhrase());
-        self::assertSame('text/html; charset=utf-8', $response->getHeaderLine('Content-Type'));
+        self::assertSame(
+            ContentType::TextHtml,
+            ContentType::fromHeaderString($response->getHeaderLine('Content-Type')),
+        );
         self::assertSame($html, (string) $response->getBody());
     }
 
     public function testConstructorWillRespectCustomCharset(): void
     {
         $html = '<p>Charset Test</p>';
+        $charset = 'iso-8859-1';
 
-        $response = new HtmlResponse($html, charset: 'iso-8859-1');
+        $response = new HtmlResponse($html, charset: $charset);
 
-        self::assertSame('text/html; charset=iso-8859-1', $response->getHeaderLine('Content-Type'));
+        self::assertSame(
+            ContentType::TextHtml,
+            ContentType::fromHeaderString($response->getHeaderLine('Content-Type')),
+        );
+        self::assertSame($charset, ContentType::getCharset($response->getHeaderLine('Content-Type')));
         self::assertSame($html, (string) $response->getBody());
     }
 
@@ -60,7 +69,11 @@ final class HtmlResponseTest extends TestCase
 
         $response = new HtmlResponse($html, headers: $headers);
 
-        self::assertSame('text/html; charset=utf-8', $response->getHeaderLine('Content-Type'));
+        self::assertSame(
+            ContentType::TextHtml,
+            ContentType::fromHeaderString($response->getHeaderLine('Content-Type')),
+        );
+        self::assertSame('utf-8', ContentType::getCharset($response->getHeaderLine('Content-Type')));
         self::assertSame('test-value', $response->getHeaderLine('X-Test'));
         self::assertSame('one, two', $response->getHeaderLine('X-Array'));
         self::assertSame($html, (string) $response->getBody());

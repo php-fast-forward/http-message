@@ -15,11 +15,13 @@ declare(strict_types=1);
 
 namespace FastForward\Http\Message\Tests;
 
+use FastForward\Http\Message\Header\ContentType;
 use FastForward\Http\Message\JsonResponse;
 use FastForward\Http\Message\JsonStream;
 use FastForward\Http\Message\PayloadResponseInterface;
 use FastForward\Http\Message\PayloadStreamInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 
@@ -35,15 +37,17 @@ final class JsonResponseTest extends TestCase
         self::assertInstanceOf(PayloadResponseInterface::class, new JsonResponse());
     }
 
-    public function testConstructorWillInitializeWithPayload(): void
+    #[DataProvider('providerCharsets')]
+    public function testConstructorWillInitializeWithCharset(string $charset): void
     {
-        $payload = ['success' => true];
+        $payload = ['success' => (bool) random_int(0, 1), 'timestamp' => time()];
 
-        $response = new JsonResponse($payload);
+        $response = new JsonResponse($payload, $charset);
 
         self::assertSame(['success' => true], $response->getPayload());
         self::assertInstanceOf(PayloadStreamInterface::class, $response->getBody());
-        self::assertSame('application/json; charset=utf-8', $response->getHeaderLine('Content-Type'));
+        self::assertSame(ContentType::ApplicationJson, ContentType::fromHeaderString($response->getHeaderLine('Content-Type')));
+        self::assertSame($charset, ContentType::getCharset($response->getHeaderLine('Content-Type')));
     }
 
     public function testWithPayloadWillReturnNewInstanceWithNewPayload(): void
@@ -74,5 +78,13 @@ final class JsonResponseTest extends TestCase
         self::assertSame(['immutable' => false], $newResponse->getPayload());
 
         self::assertNotSame($response, $newResponse);
+    }
+
+    public static function providerCharsets(): array
+    {
+        return [
+            'default charset' => ['utf-8'],
+            'custom charset'  => ['iso-8859-1'],
+        ];
     }
 }

@@ -15,6 +15,7 @@ declare(strict_types=1);
 
 namespace FastForward\Http\Message;
 
+use FastForward\Http\Message\Header\ContentType;
 use Nyholm\Psr7\Response;
 
 /**
@@ -39,10 +40,13 @@ final class JsonResponse extends Response implements PayloadResponseInterface
      */
     public function __construct(
         mixed $payload = [],
-        string $charset = 'utf-8'
+        string $charset = 'utf-8',
+        array $headers = [],
     ) {
+        $headers['Content-Type'] = ContentType::ApplicationJson->withCharset($charset);
+
         parent::__construct(
-            headers: ['Content-Type' => 'application/json; charset=' . $charset],
+            headers: $headers,
             body: new JsonStream($payload),
         );
     }

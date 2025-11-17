@@ -15,6 +15,7 @@ declare(strict_types=1);
 
 namespace FastForward\Http\Message;
 
+use FastForward\Http\Message\Header\ContentType;
 use Nyholm\Psr7\Response;
 use Nyholm\Psr7\Stream;
 
@@ -44,7 +45,7 @@ final class HtmlResponse extends Response
      */
     public function __construct(string $html, string $charset = 'utf-8', array $headers = [])
     {
-        $headers['Content-Type'] = 'text/html; charset=' . $charset;
+        $headers['Content-Type'] = ContentType::TextHtml->withCharset($charset);
 
         parent::__construct(
             status: StatusCode::Ok->value,
