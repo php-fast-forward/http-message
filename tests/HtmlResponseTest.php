@@ -47,7 +47,7 @@ final class HtmlResponseTest extends TestCase
 
     public function testConstructorWillRespectCustomCharset(): void
     {
-        $html = '<p>Charset Test</p>';
+        $html    = '<p>Charset Test</p>';
         $charset = 'iso-8859-1';
 
         $response = new HtmlResponse($html, charset: $charset);

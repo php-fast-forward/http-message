@@ -2,6 +2,17 @@
 
 declare(strict_types=1);
 
+/**
+ * This file is part of php-fast-forward/http-message.
+ *
+ * This source file is subject to the license bundled
+ * with this source code in the file LICENSE.
+ *
+ * @link      https://github.com/php-fast-forward/http-message
+ * @copyright Copyright (c) 2025 Felipe Sayão Lobato Abreu <github@mentordosnerds.com>
+ * @license   https://opensource.org/licenses/MIT MIT License
+ */
+
 namespace FastForward\Http\Message\Tests\Header;
 
 use FastForward\Http\Message\Header\Accept;
@@ -9,23 +20,26 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @internal
+ */
 #[CoversClass(Accept::class)]
-class AcceptTest extends TestCase
+final class AcceptTest extends TestCase
 {
     #[DataProvider('providerBestMatch')]
     public function testGetBestMatch(string $header, array $supported, ?Accept $expected): void
     {
-        $this->assertSame($expected, Accept::getBestMatch($header, $supported));
+        self::assertSame($expected, Accept::getBestMatch($header, $supported));
     }
 
     public function testBestMatchWithEqualQualityFactors(): void
     {
-        $header = 'text/html, application/xml;q=0.9, application/json;q=0.9';
+        $header    = 'text/html, application/xml;q=0.9, application/json;q=0.9';
         $supported = [Accept::ApplicationJson, Accept::ApplicationXml];
-        $result = Accept::getBestMatch($header, $supported);
+        $result    = Accept::getBestMatch($header, $supported);
 
-        $this->assertNotNull($result);
-        $this->assertContains($result, $supported);
+        self::assertNotNull($result);
+        self::assertContains($result, $supported);
     }
 
     public static function providerBestMatch(): array
@@ -36,52 +50,52 @@ class AcceptTest extends TestCase
             'simple match: json' => [
                 'application/json',
                 $allSupported,
-                Accept::ApplicationJson
+                Accept::ApplicationJson,
             ],
             'simple match: html' => [
                 'text/html',
                 $allSupported,
-                Accept::TextHtml
+                Accept::TextHtml,
             ],
             'quality factor: json preferred' => [
                 'text/html;q=0.8, application/json;q=0.9',
                 $allSupported,
-                Accept::ApplicationJson
+                Accept::ApplicationJson,
             ],
             'quality factor: html preferred' => [
                 'text/html;q=0.9, application/json;q=0.8',
                 $allSupported,
-                Accept::TextHtml
+                Accept::TextHtml,
             ],
             'specificity: specific type preferred over wildcard' => [
                 'application/json, */*;q=0.8',
                 $allSupported,
-                Accept::ApplicationJson
+                Accept::ApplicationJson,
             ],
             'wildcard match: any' => [
                 '*/*',
                 [Accept::TextPlain, Accept::ApplicationJson],
-                Accept::TextPlain
+                Accept::TextPlain,
             ],
             'wildcard match: subtype' => [
                 'text/*',
                 [Accept::ApplicationJson, Accept::TextPlain],
-                Accept::TextPlain
+                Accept::TextPlain,
             ],
             'no match' => [
                 'image/png',
                 $allSupported,
-                null
+                null,
             ],
             'complex header' => [
                 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
                 [Accept::ApplicationJson, Accept::ApplicationXml],
-                Accept::ApplicationXml
+                Accept::ApplicationXml,
             ],
             'unsupported type with high q' => [
                 'image/webp;q=1.0, application/json;q=0.8',
                 [Accept::ApplicationJson, Accept::TextHtml],
-                Accept::ApplicationJson
+                Accept::ApplicationJson,
             ],
         ];
     }

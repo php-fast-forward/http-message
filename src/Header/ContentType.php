@@ -2,10 +2,21 @@
 
 declare(strict_types=1);
 
+/**
+ * This file is part of php-fast-forward/http-message.
+ *
+ * This source file is subject to the license bundled
+ * with this source code in the file LICENSE.
+ *
+ * @link      https://github.com/php-fast-forward/http-message
+ * @copyright Copyright (c) 2025 Felipe Sayão Lobato Abreu <github@mentordosnerds.com>
+ * @license   https://opensource.org/licenses/MIT MIT License
+ */
+
 namespace FastForward\Http\Message\Header;
 
 /**
- * Enum ContentType
+ * Enum ContentType.
  *
  * Represents a comprehensive set of HTTP Content-Type header values.
  * Each enum case describes a MIME type that MAY be used when constructing or
@@ -21,27 +32,27 @@ enum ContentType: string
 {
     // Text Types
     case TextPlain = 'text/plain';
-    case TextHtml = 'text/html';
-    case TextCss = 'text/css';
-    case TextCsv = 'text/csv';
-    case TextXml = 'text/xml';
+    case TextHtml  = 'text/html';
+    case TextCss   = 'text/css';
+    case TextCsv   = 'text/csv';
+    case TextXml   = 'text/xml';
 
     // Application Types
-    case ApplicationJson = 'application/json';
-    case ApplicationXml = 'application/xml';
+    case ApplicationJson           = 'application/json';
+    case ApplicationXml            = 'application/xml';
     case ApplicationFormUrlencoded = 'application/x-www-form-urlencoded';
-    case ApplicationPdf = 'application/pdf';
-    case ApplicationJavascript = 'application/javascript';
-    case ApplicationOctetStream = 'application/octet-stream';
+    case ApplicationPdf            = 'application/pdf';
+    case ApplicationJavascript     = 'application/javascript';
+    case ApplicationOctetStream    = 'application/octet-stream';
 
     // Multipart Types
     case MultipartFormData = 'multipart/form-data';
 
     // Image Types
     case ImageJpeg = 'image/jpeg';
-    case ImagePng = 'image/png';
-    case ImageGif = 'image/gif';
-    case ImageSvg = 'image/svg+xml';
+    case ImagePng  = 'image/png';
+    case ImageGif  = 'image/gif';
+    case ImageSvg  = 'image/svg+xml';
 
     /**
      * Creates a ContentType instance from a full Content-Type header string.
@@ -54,8 +65,9 @@ enum ContentType: string
      * Example:
      *   "application/json; charset=utf-8" → ContentType::ApplicationJson
      *
-     * @param string $header The full Content-Type header string.
-     * @return self|null The derived ContentType case or null if unsupported.
+     * @param string $header the full Content-Type header string
+     *
+     * @return null|self the derived ContentType case or null if unsupported
      */
     public static function fromHeaderString(string $header): ?self
     {
@@ -77,13 +89,14 @@ enum ContentType: string
      * Example:
      *   "application/json; charset=utf-8" → "utf-8"
      *
-     * @param string $contentTypeHeader The full Content-Type header value.
-     * @return string|null The charset value or null if absent.
+     * @param string $contentTypeHeader the full Content-Type header value
+     *
+     * @return null|string the charset value or null if absent
      */
     public static function getCharset(string $contentTypeHeader): ?string
     {
         if (preg_match('/charset=([^;]+)/i', $contentTypeHeader, $matches)) {
-            return trim($matches[1]);
+            return mb_trim($matches[1]);
         }
 
         return null;
@@ -96,8 +109,9 @@ enum ContentType: string
      * format. Implementations SHOULD ensure the provided charset is valid
      * according to application requirements.
      *
-     * @param string $charset The charset to append to the Content-Type.
-     * @return string The resulting Content-Type header value.
+     * @param string $charset the charset to append to the Content-Type
+     *
+     * @return string the resulting Content-Type header value
      */
     public function withCharset(string $charset): string
     {
@@ -110,11 +124,11 @@ enum ContentType: string
      * This method SHALL evaluate strictly via enum identity comparison. It MUST
      * return true only for application/json.
      *
-     * @return bool True if JSON type, false otherwise.
+     * @return bool true if JSON type, false otherwise
      */
     public function isJson(): bool
     {
-        return $this === self::ApplicationJson;
+        return self::ApplicationJson === $this;
     }
 
     /**
@@ -123,11 +137,11 @@ enum ContentType: string
      * This method SHALL consider both application/xml and text/xml as valid XML
      * content types. It MUST return true for either enumeration case.
      *
-     * @return bool True if XML type, false otherwise.
+     * @return bool true if XML type, false otherwise
      */
     public function isXml(): bool
     {
-        return $this === self::ApplicationXml || $this === self::TextXml;
+        return self::ApplicationXml === $this || self::TextXml === $this;
     }
 
     /**
@@ -136,7 +150,7 @@ enum ContentType: string
      * Any MIME type beginning with "text/" SHALL be treated as text content.
      * This method MUST use string prefix evaluation according to the enum value.
      *
-     * @return bool True if text-based type, false otherwise.
+     * @return bool true if text-based type, false otherwise
      */
     public function isText(): bool
     {
@@ -149,7 +163,7 @@ enum ContentType: string
      * Multipart types are typically used for form uploads and MUST begin with
      * "multipart/". This method SHALL match MIME type prefixes accordingly.
      *
-     * @return bool True if multipart type, false otherwise.
+     * @return bool true if multipart type, false otherwise
      */
     public function isMultipart(): bool
     {
