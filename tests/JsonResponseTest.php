@@ -30,6 +30,7 @@ use PHPUnit\Framework\TestCase;
  */
 #[CoversClass(JsonResponse::class)]
 #[UsesClass(JsonStream::class)]
+#[UsesClass(ContentType::class)]
 final class JsonResponseTest extends TestCase
 {
     public function testClassImplementsJsonResponseInterface(): void
@@ -44,7 +45,7 @@ final class JsonResponseTest extends TestCase
 
         $response = new JsonResponse($payload, $charset);
 
-        self::assertSame(['success' => true], $response->getPayload());
+        self::assertSame($payload, $response->getPayload());
         self::assertInstanceOf(PayloadStreamInterface::class, $response->getBody());
         self::assertSame(ContentType::ApplicationJson, ContentType::fromHeaderString($response->getHeaderLine('Content-Type')));
         self::assertSame($charset, ContentType::getCharset($response->getHeaderLine('Content-Type')));

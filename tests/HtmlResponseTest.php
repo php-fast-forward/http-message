@@ -27,6 +27,7 @@ use PHPUnit\Framework\TestCase;
  */
 #[CoversClass(HtmlResponse::class)]
 #[UsesClass(StatusCode::class)]
+#[UsesClass(ContentType::class)]
 final class HtmlResponseTest extends TestCase
 {
     public function testConstructorWillSetHtmlBodyAndContentType(): void
