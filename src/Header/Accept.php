@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 namespace FastForward\Http\Message\Header;
 
-use function explode;
-use function str_contains;
+use function preg_match_all;
 use function str_ends_with;
 use function str_starts_with;
 use function strtok;
@@ -57,32 +56,28 @@ enum Accept: string
     private static function parseHeader(string $header): array
     {
         $preferences = [];
-        $parts = explode(',', $header);
+        // Regex to capture type and an optional q-factor, ignoring other parameters.
+        $pattern = '/(?<type>[^,;]+)(?:;[^,]*q=(?<q>[0-9.]+))?/';
 
-        foreach ($parts as $part) {
-            $params = explode(';', $part);
-            $type = trim($params[0]);
-            $q = 1.0;
-            
-            if (isset($params[1]) && str_contains($params[1], 'q=')) {
-                $q = (float) trim(explode('=', $params[1])[1]);
+        if (preg_match_all($pattern, $header, $matches, PREG_SET_ORDER)) {
+            foreach ($matches as $match) {
+                $type = trim($match['type']);
+                $q = isset($match['q']) && $match['q'] !== '' ? (float) $match['q'] : 1.0;
+
+                $preferences[] = [
+                    'type' => $type,
+                    'q' => $q,
+                    'specificity' => self::calculateSpecificity($type),
+                ];
             }
-
-            $preferences[] = [
-                'type' => $type,
-                'q' => $q,
-                'specificity' => self::calculateSpecificity($type),
-            ];
         }
 
-        usort($preferences, function ($a, $b) {
+        usort($preferences, static function ($a, $b) {
             if ($a['q'] !== $b['q']) {
                 return $b['q'] <=> $a['q']; // Sort by quality factor descending
             }
-            if ($a['specificity'] !== $b['specificity']) {
-                return $b['specificity'] <=> $a['specificity']; // Then by specificity descending
-            }
-            return 0;
+
+            return $b['specificity'] <=> $a['specificity']; // Then by specificity descending
         });
 
         return $preferences;
