@@ -8,9 +8,12 @@ declare(strict_types=1);
  * This source file is subject to the license bundled
  * with this source code in the file LICENSE.
  *
- * @link      https://github.com/php-fast-forward/http-message
- * @copyright Copyright (c) 2025 Felipe Sayão Lobato Abreu <github@mentordosnerds.com>
+ * @copyright Copyright (c) 2025-2026 Felipe Sayão Lobato Abreu <github@mentordosnerds.com>
  * @license   https://opensource.org/licenses/MIT MIT License
+ *
+ * @see       https://github.com/php-fast-forward/http-message
+ * @see       https://github.com/php-fast-forward
+ * @see       https://datatracker.ietf.org/doc/html/rfc2119
  */
 
 namespace FastForward\Http\Message;
@@ -21,8 +24,6 @@ namespace FastForward\Http\Message;
  * Defines functionality for objects that encapsulate and manage a payload.
  * Implementations of this interface MUST provide immutable methods for accessing and replacing the payload.
  * The payload MAY be of any type supported by the implementation, including arrays, objects, scalars, or null.
- *
- * @package FastForward\Http\Message
  *
  * @internal
  */

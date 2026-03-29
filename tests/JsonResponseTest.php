@@ -8,13 +8,17 @@ declare(strict_types=1);
  * This source file is subject to the license bundled
  * with this source code in the file LICENSE.
  *
- * @link      https://github.com/php-fast-forward/http-message
- * @copyright Copyright (c) 2025 Felipe Sayão Lobato Abreu <github@mentordosnerds.com>
+ * @copyright Copyright (c) 2025-2026 Felipe Sayão Lobato Abreu <github@mentordosnerds.com>
  * @license   https://opensource.org/licenses/MIT MIT License
+ *
+ * @see       https://github.com/php-fast-forward/http-message
+ * @see       https://github.com/php-fast-forward
+ * @see       https://datatracker.ietf.org/doc/html/rfc2119
  */
 
 namespace FastForward\Http\Message\Tests;
 
+use PHPUnit\Framework\Attributes\Test;
 use FastForward\Http\Message\Header\ContentType;
 use FastForward\Http\Message\JsonResponse;
 use FastForward\Http\Message\JsonStream;
@@ -33,28 +37,52 @@ use PHPUnit\Framework\TestCase;
 #[UsesClass(ContentType::class)]
 final class JsonResponseTest extends TestCase
 {
-    public function testClassImplementsJsonResponseInterface(): void
+    /**
+     * @return void
+     */
+    #[Test]
+    public function implementsJsonResponseInterfaceWillReturnInstanceOfPayloadResponseInterface(): void
     {
         self::assertInstanceOf(PayloadResponseInterface::class, new JsonResponse());
     }
 
+    /**
+     * @param string $charset
+     *
+     * @return void
+     */
     #[DataProvider('providerCharsets')]
-    public function testConstructorWillInitializeWithCharset(string $charset): void
+    #[Test]
+    public function constructWithPayloadAndCharsetWillReturnResponseWithPayloadAndCharset(string $charset): void
     {
-        $payload = ['success' => (bool) random_int(0, 1), 'timestamp' => time()];
+        $payload = [
+            'success' => (bool) random_int(0, 1),
+            'timestamp' => time(),
+        ];
 
         $response = new JsonResponse($payload, $charset);
 
         self::assertSame($payload, $response->getPayload());
         self::assertInstanceOf(PayloadStreamInterface::class, $response->getBody());
-        self::assertSame(ContentType::ApplicationJson, ContentType::fromHeaderString($response->getHeaderLine('Content-Type')));
+        self::assertSame(
+            ContentType::ApplicationJson,
+            ContentType::fromHeaderString($response->getHeaderLine('Content-Type'))
+        );
         self::assertSame($charset, ContentType::getCharset($response->getHeaderLine('Content-Type')));
     }
 
-    public function testWithPayloadWillReturnNewInstanceWithNewPayload(): void
+    /**
+     * @return void
+     */
+    #[Test]
+    public function withPayloadWithNewPayloadWillReturnNewInstanceWithNewPayload(): void
     {
-        $initialPayload = ['foo' => 'bar'];
-        $newPayload     = ['bar' => 'baz'];
+        $initialPayload = [
+            'foo' => 'bar',
+        ];
+        $newPayload     = [
+            'bar' => 'baz',
+        ];
 
         $original = new JsonResponse($initialPayload);
         $updated  = $original->withPayload($newPayload);
@@ -66,21 +94,36 @@ final class JsonResponseTest extends TestCase
         self::assertInstanceOf(JsonResponse::class, $updated);
     }
 
-    public function testWithPayloadWillNotMutateOriginalResponse(): void
+    /**
+     * @return void
+     */
+    #[Test]
+    public function withPayloadWithNewPayloadWillNotMutateOriginalResponse(): void
     {
-        $payload = ['immutable' => true];
+        $payload = [
+            'immutable' => true,
+        ];
 
         $response   = new JsonResponse($payload);
-        $newPayload = ['immutable' => false];
+        $newPayload = [
+            'immutable' => false,
+        ];
 
         $newResponse = $response->withPayload($newPayload);
 
-        self::assertSame(['immutable' => true], $response->getPayload());
-        self::assertSame(['immutable' => false], $newResponse->getPayload());
+        self::assertSame([
+            'immutable' => true,
+        ], $response->getPayload());
+        self::assertSame([
+            'immutable' => false,
+        ], $newResponse->getPayload());
 
         self::assertNotSame($response, $newResponse);
     }
 
+    /**
+     * @return array
+     */
     public static function providerCharsets(): array
     {
         return [

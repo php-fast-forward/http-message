@@ -8,9 +8,12 @@ declare(strict_types=1);
  * This source file is subject to the license bundled
  * with this source code in the file LICENSE.
  *
- * @link      https://github.com/php-fast-forward/http-message
- * @copyright Copyright (c) 2025 Felipe Sayão Lobato Abreu <github@mentordosnerds.com>
+ * @copyright Copyright (c) 2025-2026 Felipe Sayão Lobato Abreu <github@mentordosnerds.com>
  * @license   https://opensource.org/licenses/MIT MIT License
+ *
+ * @see       https://github.com/php-fast-forward/http-message
+ * @see       https://github.com/php-fast-forward
+ * @see       https://datatracker.ietf.org/doc/html/rfc2119
  */
 
 namespace FastForward\Http\Message;
@@ -25,8 +28,6 @@ use Nyholm\Psr7\Response;
  * This class MUST be used when generating responses that intentionally contain no body content,
  * in compliance with RFC 9110. It automatically sets the HTTP status code to 204 (No Content)
  * and applies an optional set of headers.
- *
- * @package FastForward\Http\Message
  */
 final class EmptyResponse extends Response
 {
@@ -36,7 +37,7 @@ final class EmptyResponse extends Response
      * This constructor SHALL initialize the response with HTTP status 204 and no body content.
      * The 'reason' phrase for status 204 is automatically included based on StatusCode enumeration.
      *
-     * @param array<string, string|string[]> $headers optional headers to include in the response
+     * @param array $headers optional headers to include in the response
      */
     public function __construct(array $headers = [])
     {

@@ -8,9 +8,12 @@ declare(strict_types=1);
  * This source file is subject to the license bundled
  * with this source code in the file LICENSE.
  *
- * @link      https://github.com/php-fast-forward/http-message
- * @copyright Copyright (c) 2025 Felipe Sayão Lobato Abreu <github@mentordosnerds.com>
+ * @copyright Copyright (c) 2025-2026 Felipe Sayão Lobato Abreu <github@mentordosnerds.com>
  * @license   https://opensource.org/licenses/MIT MIT License
+ *
+ * @see       https://github.com/php-fast-forward/http-message
+ * @see       https://github.com/php-fast-forward
+ * @see       https://datatracker.ietf.org/doc/html/rfc2119
  */
 
 namespace FastForward\Http\Message\Header;
@@ -62,12 +65,9 @@ enum ContentType: string
      * for determining the enum case. If the base MIME type does not match any
      * known ContentType, this method MUST return null.
      *
-     * Example:
-     *   "application/json; charset=utf-8" → ContentType::ApplicationJson
-     *
      * @param string $header the full Content-Type header string
      *
-     * @return null|self the derived ContentType case or null if unsupported
+     * @return self|null the derived ContentType case or null if unsupported
      */
     public static function fromHeaderString(string $header): ?self
     {
@@ -86,12 +86,9 @@ enum ContentType: string
      * required. If no charset is present, this method MUST return null. The
      * extracted charset value SHALL be trimmed of surrounding whitespace.
      *
-     * Example:
-     *   "application/json; charset=utf-8" → "utf-8"
-     *
      * @param string $contentTypeHeader the full Content-Type header value
      *
-     * @return null|string the charset value or null if absent
+     * @return string|null the charset value or null if absent
      */
     public static function getCharset(string $contentTypeHeader): ?string
     {

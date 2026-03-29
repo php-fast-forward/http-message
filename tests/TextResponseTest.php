@@ -8,13 +8,17 @@ declare(strict_types=1);
  * This source file is subject to the license bundled
  * with this source code in the file LICENSE.
  *
- * @link      https://github.com/php-fast-forward/http-message
- * @copyright Copyright (c) 2025 Felipe Sayão Lobato Abreu <github@mentordosnerds.com>
+ * @copyright Copyright (c) 2025-2026 Felipe Sayão Lobato Abreu <github@mentordosnerds.com>
  * @license   https://opensource.org/licenses/MIT MIT License
+ *
+ * @see       https://github.com/php-fast-forward/http-message
+ * @see       https://github.com/php-fast-forward
+ * @see       https://datatracker.ietf.org/doc/html/rfc2119
  */
 
 namespace FastForward\Http\Message\Tests;
 
+use PHPUnit\Framework\Attributes\Test;
 use FastForward\Http\Message\StatusCode;
 use FastForward\Http\Message\TextResponse;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -28,7 +32,11 @@ use PHPUnit\Framework\TestCase;
 #[UsesClass(StatusCode::class)]
 final class TextResponseTest extends TestCase
 {
-    public function testConstructorWillSetTextBodyAndContentType(): void
+    /**
+     * @return void
+     */
+    #[Test]
+    public function constructWithTextWillReturnResponseWithTextBodyAndContentType(): void
     {
         $text = 'Plain text response';
 
@@ -40,7 +48,11 @@ final class TextResponseTest extends TestCase
         self::assertSame($text, (string) $response->getBody());
     }
 
-    public function testConstructorWillRespectCustomCharset(): void
+    /**
+     * @return void
+     */
+    #[Test]
+    public function constructWithCustomCharsetWillReturnResponseWithCharset(): void
     {
         $text    = 'Texto com charset';
         $charset = 'iso-8859-1';
@@ -51,7 +63,11 @@ final class TextResponseTest extends TestCase
         self::assertSame($text, (string) $response->getBody());
     }
 
-    public function testConstructorWillPreserveAdditionalHeaders(): void
+    /**
+     * @return void
+     */
+    #[Test]
+    public function constructWithAdditionalHeadersWillReturnResponseWithHeaders(): void
     {
         $text    = 'Texto com cabeçalhos';
         $headers = [

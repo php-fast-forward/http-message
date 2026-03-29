@@ -15,14 +15,12 @@
         "source": "https://github.com/php-fast-forward/http-message"
     },
     "require": {
-        "php": "^8.2",
+        "php": "^8.3",
         "nyholm/psr7": "^1.8",
         "psr/http-message": "^2.0"
     },
     "require-dev": {
-        "coisa/php-cs-fixer": "^2.1",
-        "phpspec/prophecy-phpunit": "^2.3",
-        "phpunit/phpunit": "^9.6 || ^10.5 || ^11.5"
+        "fast-forward/dev-tools": "dev-main"
     },
     "minimum-stability": "stable",
     "autoload": {
@@ -36,23 +34,27 @@
         }
     },
     "config": {
+        "allow-plugins": {
+            "ergebnis/composer-normalize": true,
+            "fast-forward/dev-tools": true,
+            "phpdocumentor/shim": true,
+            "phpro/grumphp": true
+        },
+        "platform": {
+            "php": "8.3.0"
+        },
         "sort-packages": true
     },
     "extra": {
         "branch-alias": {
             "dev-main": "1.x-dev"
+        },
+        "grumphp": {
+            "config-default-path": "vendor/fast-forward/dev-tools/grumphp.yml"
         }
     },
     "scripts": {
-        "cs-check": "PHP_CS_FIXER_IGNORE_ENV=1 php-cs-fixer fix --dry-run --diff",
-        "cs-fix": "PHP_CS_FIXER_IGNORE_ENV=1 php-cs-fixer fix",
-        "mutation-testing": "infection --threads=4",
-        "pre-commit": [
-            "@cs-check",
-            "@static-analysis",
-            "@tests"
-        ],
-        "static-analysis": "phpstan analyse --level 5 src",
-        "tests": "phpunit --testdox"
+        "dev-tools": "dev-tools",
+        "dev-tools:fix": "@dev-tools --fix"
     }
 }

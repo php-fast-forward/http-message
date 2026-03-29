@@ -8,12 +8,17 @@ declare(strict_types=1);
  * This source file is subject to the license bundled
  * with this source code in the file LICENSE.
  *
- * @link      https://github.com/php-fast-forward/http-message
- * @copyright Copyright (c) 2025 Felipe Sayão Lobato Abreu <github@mentordosnerds.com>
+ * @copyright Copyright (c) 2025-2026 Felipe Sayão Lobato Abreu <github@mentordosnerds.com>
  * @license   https://opensource.org/licenses/MIT MIT License
+ *
+ * @see       https://github.com/php-fast-forward/http-message
+ * @see       https://github.com/php-fast-forward
+ * @see       https://datatracker.ietf.org/doc/html/rfc2119
  */
 
 namespace FastForward\Http\Message\Header\Authorization;
+
+use SensitiveParameter;
 
 /**
  * Class AwsCredential.
@@ -49,7 +54,7 @@ namespace FastForward\Http\Message\Header\Authorization;
  * - **signature**: A 64-character hexadecimal string representing the
  *   computed request signature.
  */
-final class AwsCredential implements AuthorizationCredential
+final readonly class AwsCredential implements AuthorizationCredential
 {
     /**
      * Creates a representation of the SigV4 credential parameters extracted
@@ -61,18 +66,18 @@ final class AwsCredential implements AuthorizationCredential
      * reconstruction) MUST be performed by the caller or authentication
      * subsystem.
      *
-     * @param string $algorithm       the SigV4 signing algorithm identifier
+     * @param string $algorithm the SigV4 signing algorithm identifier
      * @param string $credentialScope the credential scope string
      *                                (`AccessKeyId/Date/Region/Service/aws4_request`)
-     * @param string $signedHeaders   a semicolon-separated list of signed headers
-     * @param string $signature       a 64-character hex-encoded signature
+     * @param string $signedHeaders a semicolon-separated list of signed headers
+     * @param string $signature a 64-character hex-encoded signature
      */
     public function __construct(
-        public readonly string $algorithm,
-        #[\SensitiveParameter]
-        public readonly string $credentialScope,
-        public readonly string $signedHeaders,
-        #[\SensitiveParameter]
-        public readonly string $signature,
+        public string $algorithm,
+        #[SensitiveParameter]
+        public string $credentialScope,
+        public string $signedHeaders,
+        #[SensitiveParameter]
+        public string $signature,
     ) {}
 }

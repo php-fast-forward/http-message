@@ -20,9 +20,12 @@ declare(strict_types=1);
  * This source file is subject to the license bundled
  * with this source code in the file LICENSE.
  *
- * @link      https://github.com/php-fast-forward/http-message
- * @copyright Copyright (c) 2025 Felipe Sayão Lobato Abreu <github@mentordosnerds.com>
+ * @copyright Copyright (c) 2025-2026 Felipe Sayão Lobato Abreu <github@mentordosnerds.com>
  * @license   https://opensource.org/licenses/MIT MIT License
+ *
+ * @see       https://github.com/php-fast-forward/http-message
+ * @see       https://github.com/php-fast-forward
+ * @see       https://datatracker.ietf.org/doc/html/rfc2119
  */
 
 namespace FastForward\Http\Message\Header;
@@ -37,7 +40,6 @@ namespace FastForward\Http\Message\Header;
  * caches for subsequent requests or responses. The listed values indicate
  * which transfer codings have been applied to the message body in order to
  * safely move it between intermediaries.
- *
  * Implementations using this enum SHOULD ensure that the semantics
  * of chunked transfer-coding and any compression codings are respected
  * according to the relevant HTTP specifications.
@@ -53,7 +55,6 @@ enum TransferEncoding: string
      * Chunked transfer-coding is the only transfer-coding that is mandatory
      * for HTTP/1.1 compliance and MUST be understood by all HTTP/1.1 agents
      * that advertise support for `Transfer-Encoding`.
-     *
      * When present, `chunked` MUST be the final transfer-coding applied to
      * the payload. It allows the sender to stream content without knowing
      * the final length in advance.
@@ -98,7 +99,6 @@ enum TransferEncoding: string
      * RFC 7230 specifies that `chunked` MUST be the final transfer-coding
      * when present, this method deliberately checks only for its existence to
      * provide a more robust, tolerant interpretation of real-world headers.
-     *
      * Callers SHOULD use this method before attempting to parse a message
      * body as chunked data.
      *
@@ -112,7 +112,7 @@ enum TransferEncoding: string
             return false;
         }
 
-        $codings = array_map('\mb_trim', explode(',', mb_strtolower($transferEncodingHeader)));
+        $codings = array_map(\mb_trim(...), explode(',', mb_strtolower($transferEncodingHeader)));
 
         return \in_array(self::Chunked->value, $codings, true);
     }

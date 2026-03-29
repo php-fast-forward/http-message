@@ -8,9 +8,12 @@ declare(strict_types=1);
  * This source file is subject to the license bundled
  * with this source code in the file LICENSE.
  *
- * @link      https://github.com/php-fast-forward/http-message
- * @copyright Copyright (c) 2025 Felipe Sayão Lobato Abreu <github@mentordosnerds.com>
+ * @copyright Copyright (c) 2025-2026 Felipe Sayão Lobato Abreu <github@mentordosnerds.com>
  * @license   https://opensource.org/licenses/MIT MIT License
+ *
+ * @see       https://github.com/php-fast-forward/http-message
+ * @see       https://github.com/php-fast-forward
+ * @see       https://datatracker.ietf.org/doc/html/rfc2119
  */
 
 namespace FastForward\Http\Message;
@@ -35,14 +38,12 @@ final class JsonResponse extends Response implements PayloadResponseInterface
      * This constructor SHALL initialize the response body with a JsonStream containing the provided payload.
      * The 'Content-Type' header MUST be set to 'application/json' with the specified charset.
      *
-     * @param mixed  $payload The JSON-serializable payload to send in the response body. Defaults to an empty array.
+     * @param mixed $payload The JSON-serializable payload to send in the response body. Defaults to an empty array.
      * @param string $charset The character encoding to use in the 'Content-Type' header. Defaults to 'utf-8'.
+     * @param array $headers
      */
-    public function __construct(
-        mixed $payload = [],
-        string $charset = 'utf-8',
-        array $headers = [],
-    ) {
+    public function __construct(mixed $payload = [], string $charset = 'utf-8', array $headers = [])
+    {
         $headers['Content-Type'] = ContentType::ApplicationJson->withCharset($charset);
 
         parent::__construct(
@@ -60,7 +61,8 @@ final class JsonResponse extends Response implements PayloadResponseInterface
      */
     public function getPayload(): mixed
     {
-        return $this->getBody()->getPayload();
+        return $this->getBody()
+            ->getPayload();
     }
 
     /**

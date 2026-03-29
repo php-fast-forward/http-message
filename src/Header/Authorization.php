@@ -8,9 +8,12 @@ declare(strict_types=1);
  * This source file is subject to the license bundled
  * with this source code in the file LICENSE.
  *
- * @link      https://github.com/php-fast-forward/http-message
- * @copyright Copyright (c) 2025 Felipe Sayão Lobato Abreu <github@mentordosnerds.com>
+ * @copyright Copyright (c) 2025-2026 Felipe Sayão Lobato Abreu <github@mentordosnerds.com>
  * @license   https://opensource.org/licenses/MIT MIT License
+ *
+ * @see       https://github.com/php-fast-forward/http-message
+ * @see       https://github.com/php-fast-forward
+ * @see       https://datatracker.ietf.org/doc/html/rfc2119
  */
 
 namespace FastForward\Http\Message\Header;
@@ -98,14 +101,13 @@ enum Authorization: string
      * - Split the header into an authentication scheme and a credentials part.
      * - Resolve the scheme to a supported enum value.
      * - Delegate to the appropriate scheme-specific parser.
-     *
      * If the header is empty, malformed, or uses an unsupported scheme,
      * this method MUST return null. Callers SHOULD treat a null result as
      * an authentication parsing failure.
      *
      * @param string $header the raw value of the `Authorization` header
      *
-     * @return null|AuthorizationCredential a credential object on successful parsing, or null on failure
+     * @return AuthorizationCredential|null a credential object on successful parsing, or null on failure
      */
     public static function parse(string $header): ?AuthorizationCredential
     {
@@ -141,15 +143,15 @@ enum Authorization: string
      * the first `Authorization` value if multiple values are provided. If the
      * header is missing or cannot be parsed successfully, it MUST return null.
      *
-     * @param array<string, string|string[]> $headers an associative array of HTTP headers
+     * @param array $headers an associative array of HTTP headers
      *
-     * @return null|AuthorizationCredential a parsed credential object or null if not present or invalid
+     * @return AuthorizationCredential|null a parsed credential object or null if not present or invalid
      */
     public static function fromHeaderCollection(array $headers): ?AuthorizationCredential
     {
-        $normalizedHeaders = array_change_key_case($headers, CASE_LOWER);
+        $normalizedHeaders = array_change_key_case($headers, \CASE_LOWER);
 
-        if (!isset($normalizedHeaders['authorization'])) {
+        if (! isset($normalizedHeaders['authorization'])) {
             return null;
         }
 
@@ -170,7 +172,7 @@ enum Authorization: string
      *
      * @param RequestInterface $request the PSR-7 request instance
      *
-     * @return null|AuthorizationCredential a parsed credential object or null if not present or invalid
+     * @return AuthorizationCredential|null a parsed credential object or null if not present or invalid
      */
     public static function fromRequest(RequestInterface $request): ?AuthorizationCredential
     {
@@ -199,13 +201,12 @@ enum Authorization: string
      * This method MUST:
      * - Base64-decode the credentials.
      * - Split the decoded string into `username:password`.
-     *
      * If decoding fails or the decoded value does not contain exactly one
      * colon separator, this method MUST return null.
      *
      * @param string $credentials the Base64-encoded "username:password" string
      *
-     * @return null|BasicCredential the parsed Basic credential, or null on failure
+     * @return BasicCredential|null the parsed Basic credential, or null on failure
      */
     private static function parseBasic(string $credentials): ?BasicCredential
     {
@@ -245,7 +246,6 @@ enum Authorization: string
      * This method MUST parse comma-separated key=value pairs according to
      * RFC 7616. Values MAY be quoted or unquoted. If any part is malformed
      * or required parameters are missing, it MUST return null.
-     *
      * Required parameters:
      * - username
      * - realm
@@ -255,13 +255,12 @@ enum Authorization: string
      * - qop
      * - nc
      * - cnonce
-     *
      * Optional parameters such as `opaque` and `algorithm` SHALL be included
      * in the credential object when present.
      *
      * @param string $credentials the raw credentials portion of the header
      *
-     * @return null|DigestCredential the parsed Digest credential object, or null on failure
+     * @return DigestCredential|null the parsed Digest credential object, or null on failure
      */
     private static function parseDigest(string $credentials): ?DigestCredential
     {
@@ -273,7 +272,7 @@ enum Authorization: string
 
             $pattern = '/^(?<key>[a-zA-Z0-9_-]+)=(?<value>"[^"]*"|[^"]*)$/i';
 
-            if (!preg_match($pattern, $part, $match)) {
+            if (! preg_match($pattern, $part, $match)) {
                 return null;
             }
 
@@ -284,7 +283,7 @@ enum Authorization: string
 
         $required = ['username', 'realm', 'nonce', 'uri', 'response', 'qop', 'nc', 'cnonce'];
         foreach ($required as $key) {
-            if (!isset($params[$key])) {
+            if (! isset($params[$key])) {
                 return null;
             }
         }
@@ -310,14 +309,13 @@ enum Authorization: string
      * the mandatory parameters `Credential`, `SignedHeaders`, and `Signature`
      * are present. The `Signature` value MUST be a 64-character hexadecimal
      * string. If parsing or validation fails, it MUST return null.
-     *
      * The `Credential` parameter contains the full credential scope in the form
      * `AccessKeyId/Date/Region/Service/aws4_request`, which SHALL be stored
      * as-is for downstream processing.
      *
      * @param string $credentials the raw credentials portion of the header
      *
-     * @return null|AwsCredential the parsed AWS credential object, or null on failure
+     * @return AwsCredential|null the parsed AWS credential object, or null on failure
      */
     private static function parseAws(string $credentials): ?AwsCredential
     {
@@ -329,7 +327,7 @@ enum Authorization: string
 
             $pattern = '/^(?<key>[a-zA-Z0-9_-]+)=(?<value>[^, ]+)$/';
 
-            if (!preg_match($pattern, $part, $match)) {
+            if (! preg_match($pattern, $part, $match)) {
                 return null;
             }
 
@@ -340,12 +338,12 @@ enum Authorization: string
 
         $required = ['Credential', 'SignedHeaders', 'Signature'];
         foreach ($required as $key) {
-            if (!isset($params[$key])) {
+            if (! isset($params[$key])) {
                 return null;
             }
         }
 
-        if (!preg_match('/^[0-9a-fA-F]{64}$/', $params['Signature'])) {
+        if (! preg_match('/^[0-9a-fA-F]{64}$/', $params['Signature'])) {
             return null;
         }
 

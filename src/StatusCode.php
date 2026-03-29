@@ -8,9 +8,12 @@ declare(strict_types=1);
  * This source file is subject to the license bundled
  * with this source code in the file LICENSE.
  *
- * @link      https://github.com/php-fast-forward/http-message
- * @copyright Copyright (c) 2025 Felipe Sayão Lobato Abreu <github@mentordosnerds.com>
+ * @copyright Copyright (c) 2025-2026 Felipe Sayão Lobato Abreu <github@mentordosnerds.com>
  * @license   https://opensource.org/licenses/MIT MIT License
+ *
+ * @see       https://github.com/php-fast-forward/http-message
+ * @see       https://github.com/php-fast-forward
+ * @see       https://datatracker.ietf.org/doc/html/rfc2119
  */
 
 namespace FastForward\Http\Message;
@@ -28,8 +31,6 @@ namespace FastForward\Http\Message;
  * - Server Errors (5xx)
  *
  * All status codes MUST adhere to the official HTTP specification and SHALL be used consistently within HTTP responses.
- *
- * @package FastForward\Http\Message
  */
 enum StatusCode: int
 {
@@ -263,6 +264,8 @@ enum StatusCode: int
      * - 3: Redirection
      * - 4: Client Error
      * - 5: Server Error
+     *
+     * @return string
      */
     public function getCategory(): string
     {
@@ -277,6 +280,8 @@ enum StatusCode: int
 
     /**
      * Returns true if the status code is informational (1xx).
+     *
+     * @return bool
      */
     public function isInformational(): bool
     {
@@ -285,6 +290,8 @@ enum StatusCode: int
 
     /**
      * Returns true if the status code indicates success (2xx).
+     *
+     * @return bool
      */
     public function isSuccess(): bool
     {
@@ -293,6 +300,8 @@ enum StatusCode: int
 
     /**
      * Returns true if the status code indicates redirection (3xx).
+     *
+     * @return bool
      */
     public function isRedirection(): bool
     {
@@ -301,6 +310,8 @@ enum StatusCode: int
 
     /**
      * Returns true if the status code indicates a client error (4xx).
+     *
+     * @return bool
      */
     public function isClientError(): bool
     {
@@ -309,6 +320,8 @@ enum StatusCode: int
 
     /**
      * Returns true if the status code indicates a server error (5xx).
+     *
+     * @return bool
      */
     public function isServerError(): bool
     {
@@ -317,9 +330,15 @@ enum StatusCode: int
 
     /**
      * Returns true if the status code indicates any type of error (client or server).
+     *
+     * @return bool
      */
     public function isError(): bool
     {
-        return $this->isClientError() || $this->isServerError();
+        if ($this->isClientError()) {
+            return true;
+        }
+
+        return $this->isServerError();
     }
 }

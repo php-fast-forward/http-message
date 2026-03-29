@@ -8,9 +8,12 @@ declare(strict_types=1);
  * This source file is subject to the license bundled
  * with this source code in the file LICENSE.
  *
- * @link      https://github.com/php-fast-forward/http-message
- * @copyright Copyright (c) 2025 Felipe Sayão Lobato Abreu <github@mentordosnerds.com>
+ * @copyright Copyright (c) 2025-2026 Felipe Sayão Lobato Abreu <github@mentordosnerds.com>
  * @license   https://opensource.org/licenses/MIT MIT License
+ *
+ * @see       https://github.com/php-fast-forward/http-message
+ * @see       https://github.com/php-fast-forward
+ * @see       https://datatracker.ietf.org/doc/html/rfc2119
  */
 
 namespace FastForward\Http\Message\Tests\Header;
@@ -18,6 +21,7 @@ namespace FastForward\Http\Message\Tests\Header;
 use FastForward\Http\Message\Header\ContentEncoding;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -26,18 +30,39 @@ use PHPUnit\Framework\TestCase;
 #[CoversClass(ContentEncoding::class)]
 final class ContentEncodingTest extends TestCase
 {
+    /**
+     * @param ContentEncoding $case
+     * @param string $expected
+     *
+     * @return void
+     */
     #[DataProvider('providerCases')]
-    public function testCasesHaveCorrectValues(ContentEncoding $case, string $expected): void
+    #[Test]
+    public function valueWithCaseWillReturnExpectedValue(ContentEncoding $case, string $expected): void
     {
         self::assertSame($expected, $case->value);
     }
 
+    /**
+     * @param ContentEncoding $encoding
+     * @param string $header
+     * @param bool $expected
+     *
+     * @return void
+     */
     #[DataProvider('providerIsSupported')]
-    public function testIsSupported(ContentEncoding $encoding, string $header, bool $expected): void
-    {
+    #[Test]
+    public function isSupportedWithEncodingAndHeaderWillReturnExpected(
+        ContentEncoding $encoding,
+        string $header,
+        bool $expected
+    ): void {
         self::assertSame($expected, ContentEncoding::isSupported($encoding, $header));
     }
 
+    /**
+     * @return array
+     */
     public static function providerCases(): array
     {
         return [
@@ -52,14 +77,25 @@ final class ContentEncodingTest extends TestCase
         ];
     }
 
+    /**
+     * @return array
+     */
     public static function providerIsSupported(): array
     {
         return [
             'explicitly accepted'                             => [ContentEncoding::Gzip, 'gzip, deflate, br', true],
             'another explicitly accepted'                     => [ContentEncoding::Brotli, 'gzip, deflate, br', true],
-            'explicitly rejected'                             => [ContentEncoding::Gzip, 'gzip;q=0, deflate, br', false],
+            'explicitly rejected'                             => [
+                ContentEncoding::Gzip,
+                'gzip;q=0, deflate, br',
+                false,
+            ],
             'accepted by x-gzip alias'                        => [ContentEncoding::Gzip, 'x-gzip, deflate, br', true],
-            'rejected by x-gzip alias'                        => [ContentEncoding::Gzip, 'x-gzip;q=0, deflate, br', false],
+            'rejected by x-gzip alias'                        => [
+                ContentEncoding::Gzip,
+                'x-gzip;q=0, deflate, br',
+                false,
+            ],
             'not mentioned but wildcard accepts'              => [ContentEncoding::Brotli, 'gzip, *;q=0.5', true],
             'not mentioned and wildcard rejects'              => [ContentEncoding::Brotli, 'gzip, *;q=0', false],
             'not mentioned and no wildcard (implicit accept)' => [ContentEncoding::Deflate, 'gzip, br', true],

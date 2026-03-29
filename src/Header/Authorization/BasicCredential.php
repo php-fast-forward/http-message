@@ -8,12 +8,17 @@ declare(strict_types=1);
  * This source file is subject to the license bundled
  * with this source code in the file LICENSE.
  *
- * @link      https://github.com/php-fast-forward/http-message
- * @copyright Copyright (c) 2025 Felipe Sayão Lobato Abreu <github@mentordosnerds.com>
+ * @copyright Copyright (c) 2025-2026 Felipe Sayão Lobato Abreu <github@mentordosnerds.com>
  * @license   https://opensource.org/licenses/MIT MIT License
+ *
+ * @see       https://github.com/php-fast-forward/http-message
+ * @see       https://github.com/php-fast-forward
+ * @see       https://datatracker.ietf.org/doc/html/rfc2119
  */
 
 namespace FastForward\Http\Message\Header\Authorization;
+
+use SensitiveParameter;
 
 /**
  * Class BasicCredential.
@@ -31,7 +36,7 @@ namespace FastForward\Http\Message\Header\Authorization;
  * {@see FastForward\Http\Message\Header\Authorization::parse()}
  * when the header contains a valid Basic Authentication value.
  */
-final class BasicCredential implements AuthorizationCredential
+final readonly class BasicCredential implements AuthorizationCredential
 {
     /**
      * Creates a new Basic Authentication credential.
@@ -45,8 +50,8 @@ final class BasicCredential implements AuthorizationCredential
      * @param string $password the plaintext password provided by the client
      */
     public function __construct(
-        public readonly string $username,
-        #[\SensitiveParameter]
-        public readonly string $password,
+        public string $username,
+        #[SensitiveParameter]
+        public string $password,
     ) {}
 }

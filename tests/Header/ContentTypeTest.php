@@ -8,9 +8,12 @@ declare(strict_types=1);
  * This source file is subject to the license bundled
  * with this source code in the file LICENSE.
  *
- * @link      https://github.com/php-fast-forward/http-message
- * @copyright Copyright (c) 2025 Felipe Sayão Lobato Abreu <github@mentordosnerds.com>
+ * @copyright Copyright (c) 2025-2026 Felipe Sayão Lobato Abreu <github@mentordosnerds.com>
  * @license   https://opensource.org/licenses/MIT MIT License
+ *
+ * @see       https://github.com/php-fast-forward/http-message
+ * @see       https://github.com/php-fast-forward
+ * @see       https://datatracker.ietf.org/doc/html/rfc2119
  */
 
 namespace FastForward\Http\Message\Tests\Header;
@@ -18,6 +21,7 @@ namespace FastForward\Http\Message\Tests\Header;
 use FastForward\Http\Message\Header\ContentType;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -26,48 +30,99 @@ use PHPUnit\Framework\TestCase;
 #[CoversClass(ContentType::class)]
 final class ContentTypeTest extends TestCase
 {
+    /**
+     * @param string $header
+     * @param ContentType|null $expected
+     *
+     * @return void
+     */
     #[DataProvider('providerHeaderStrings')]
-    public function testFromHeaderString(string $header, ?ContentType $expected): void
-    {
+    #[Test]
+    public function fromHeaderStringWithHeaderWillReturnExpectedContentType(
+        string $header,
+        ?ContentType $expected
+    ): void {
         self::assertSame($expected, ContentType::fromHeaderString($header));
     }
 
+    /**
+     * @param string $header
+     * @param string|null $expectedCharset
+     *
+     * @return void
+     */
     #[DataProvider('providerCharsets')]
-    public function testGetCharset(string $header, ?string $expectedCharset): void
+    #[Test]
+    public function getCharsetWithHeaderWillReturnExpectedCharset(string $header, ?string $expectedCharset): void
     {
         self::assertSame($expectedCharset, ContentType::getCharset($header));
     }
 
-    public function testWithCharset(): void
+    /**
+     * @return void
+     */
+    #[Test]
+    public function withCharsetWithUtf8WillReturnExpectedString(): void
     {
         $expected = 'application/json; charset=utf-8';
         self::assertSame($expected, ContentType::ApplicationJson->withCharset('utf-8'));
     }
 
+    /**
+     * @param ContentType $case
+     * @param bool $expected
+     *
+     * @return void
+     */
     #[DataProvider('providerJsonCases')]
-    public function testIsJson(ContentType $case, bool $expected): void
+    #[Test]
+    public function isJsonWithCaseWillReturnExpected(ContentType $case, bool $expected): void
     {
         self::assertSame($expected, $case->isJson());
     }
 
+    /**
+     * @param ContentType $case
+     * @param bool $expected
+     *
+     * @return void
+     */
     #[DataProvider('providerXmlCases')]
-    public function testIsXml(ContentType $case, bool $expected): void
+    #[Test]
+    public function isXmlWithCaseWillReturnExpected(ContentType $case, bool $expected): void
     {
         self::assertSame($expected, $case->isXml());
     }
 
+    /**
+     * @param ContentType $case
+     * @param bool $expected
+     *
+     * @return void
+     */
     #[DataProvider('providerTextCases')]
-    public function testIsText(ContentType $case, bool $expected): void
+    #[Test]
+    public function isTextWithCaseWillReturnExpected(ContentType $case, bool $expected): void
     {
         self::assertSame($expected, $case->isText());
     }
 
+    /**
+     * @param ContentType $case
+     * @param bool $expected
+     *
+     * @return void
+     */
     #[DataProvider('providerMultipartCases')]
-    public function testIsMultipart(ContentType $case, bool $expected): void
+    #[Test]
+    public function isMultipartWithCaseWillReturnExpected(ContentType $case, bool $expected): void
     {
         self::assertSame($expected, $case->isMultipart());
     }
 
+    /**
+     * @return array
+     */
     public static function providerHeaderStrings(): array
     {
         return [
@@ -78,6 +133,9 @@ final class ContentTypeTest extends TestCase
         ];
     }
 
+    /**
+     * @return array
+     */
     public static function providerCharsets(): array
     {
         return [
@@ -90,6 +148,9 @@ final class ContentTypeTest extends TestCase
         ];
     }
 
+    /**
+     * @return array
+     */
     public static function providerJsonCases(): array
     {
         return [
@@ -99,6 +160,9 @@ final class ContentTypeTest extends TestCase
         ];
     }
 
+    /**
+     * @return array
+     */
     public static function providerXmlCases(): array
     {
         return [
@@ -109,6 +173,9 @@ final class ContentTypeTest extends TestCase
         ];
     }
 
+    /**
+     * @return array
+     */
     public static function providerTextCases(): array
     {
         return [
@@ -122,6 +189,9 @@ final class ContentTypeTest extends TestCase
         ];
     }
 
+    /**
+     * @return array
+     */
     public static function providerMultipartCases(): array
     {
         return [

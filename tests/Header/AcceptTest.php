@@ -8,9 +8,12 @@ declare(strict_types=1);
  * This source file is subject to the license bundled
  * with this source code in the file LICENSE.
  *
- * @link      https://github.com/php-fast-forward/http-message
- * @copyright Copyright (c) 2025 Felipe Sayão Lobato Abreu <github@mentordosnerds.com>
+ * @copyright Copyright (c) 2025-2026 Felipe Sayão Lobato Abreu <github@mentordosnerds.com>
  * @license   https://opensource.org/licenses/MIT MIT License
+ *
+ * @see       https://github.com/php-fast-forward/http-message
+ * @see       https://github.com/php-fast-forward
+ * @see       https://datatracker.ietf.org/doc/html/rfc2119
  */
 
 namespace FastForward\Http\Message\Tests\Header;
@@ -18,6 +21,7 @@ namespace FastForward\Http\Message\Tests\Header;
 use FastForward\Http\Message\Header\Accept;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -26,13 +30,28 @@ use PHPUnit\Framework\TestCase;
 #[CoversClass(Accept::class)]
 final class AcceptTest extends TestCase
 {
+    /**
+     * @param string $header
+     * @param array $supported
+     * @param Accept|null $expected
+     *
+     * @return void
+     */
     #[DataProvider('providerBestMatch')]
-    public function testGetBestMatch(string $header, array $supported, ?Accept $expected): void
-    {
+    #[Test]
+    public function getBestMatchWithHeaderAndSupportedWillReturnExpectedAccept(
+        string $header,
+        array $supported,
+        ?Accept $expected
+    ): void {
         self::assertSame($expected, Accept::getBestMatch($header, $supported));
     }
 
-    public function testBestMatchWithEqualQualityFactors(): void
+    /**
+     * @return void
+     */
+    #[Test]
+    public function getBestMatchWithEqualQualityFactorsWillReturnOneOfSupported(): void
     {
         $header    = 'text/html, application/xml;q=0.9, application/json;q=0.9';
         $supported = [Accept::ApplicationJson, Accept::ApplicationXml];
@@ -42,21 +61,16 @@ final class AcceptTest extends TestCase
         self::assertContains($result, $supported);
     }
 
+    /**
+     * @return array
+     */
     public static function providerBestMatch(): array
     {
         $allSupported = [Accept::ApplicationJson, Accept::ApplicationXml, Accept::TextHtml];
 
         return [
-            'simple match: json' => [
-                'application/json',
-                $allSupported,
-                Accept::ApplicationJson,
-            ],
-            'simple match: html' => [
-                'text/html',
-                $allSupported,
-                Accept::TextHtml,
-            ],
+            'simple match: json' => ['application/json', $allSupported, Accept::ApplicationJson],
+            'simple match: html' => ['text/html', $allSupported, Accept::TextHtml],
             'quality factor: json preferred' => [
                 'text/html;q=0.8, application/json;q=0.9',
                 $allSupported,
@@ -72,21 +86,13 @@ final class AcceptTest extends TestCase
                 $allSupported,
                 Accept::ApplicationJson,
             ],
-            'wildcard match: any' => [
-                '*/*',
-                [Accept::TextPlain, Accept::ApplicationJson],
-                Accept::TextPlain,
-            ],
+            'wildcard match: any' => ['*/*', [Accept::TextPlain, Accept::ApplicationJson], Accept::TextPlain],
             'wildcard match: subtype' => [
                 'text/*',
                 [Accept::ApplicationJson, Accept::TextPlain],
                 Accept::TextPlain,
             ],
-            'no match' => [
-                'image/png',
-                $allSupported,
-                null,
-            ],
+            'no match' => ['image/png', $allSupported, null],
             'complex header' => [
                 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
                 [Accept::ApplicationJson, Accept::ApplicationXml],

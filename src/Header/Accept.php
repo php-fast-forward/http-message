@@ -8,9 +8,12 @@ declare(strict_types=1);
  * This source file is subject to the license bundled
  * with this source code in the file LICENSE.
  *
- * @link      https://github.com/php-fast-forward/http-message
- * @copyright Copyright (c) 2025 Felipe Sayão Lobato Abreu <github@mentordosnerds.com>
+ * @copyright Copyright (c) 2025-2026 Felipe Sayão Lobato Abreu <github@mentordosnerds.com>
  * @license   https://opensource.org/licenses/MIT MIT License
+ *
+ * @see       https://github.com/php-fast-forward/http-message
+ * @see       https://github.com/php-fast-forward
+ * @see       https://datatracker.ietf.org/doc/html/rfc2119
  */
 
 namespace FastForward\Http\Message\Header;
@@ -20,7 +23,6 @@ namespace FastForward\Http\Message\Header;
  *
  * Represents common HTTP Accept header values and provides robust helpers for
  * content negotiation in accordance with RFC 2119 requirement levels.
- *
  * This enum MUST be used to ensure that Accept-type comparisons are performed
  * consistently and predictably. Implementations interacting with this enum
  * SHOULD rely on its parsing and negotiation logic to determine the most
@@ -41,14 +43,13 @@ enum Accept: string
      * - Quality factors (q-values), which MUST be sorted in descending order.
      * - Specificity preference, where more explicit types MUST be preferred over
      *   wildcard types when q-values are equal.
-     *
      * If a match cannot be found in the list of supported server types,
      * the method MUST return null.
      *
-     * @param string $acceptHeader   the raw HTTP Accept header value
+     * @param string $acceptHeader the raw HTTP Accept header value
      * @param self[] $supportedTypes an array of enum cases the server supports
      *
-     * @return null|self the best match, or null if no acceptable type exists
+     * @return self|null the best match, or null if no acceptable type exists
      */
     public static function getBestMatch(string $acceptHeader, array $supportedTypes): ?self
     {
@@ -73,7 +74,6 @@ enum Accept: string
      * - Parse quality factors (q-values), defaulting to 1.0 when omitted.
      * - Calculate specificity, which SHALL be used as a secondary sort criterion.
      * - Sort results by descending q-value and descending specificity.
-     *
      * The resulting array MUST represent the client’s explicit and wildcard
      * preferences in the correct HTTP negotiation order.
      *
@@ -88,9 +88,9 @@ enum Accept: string
         // Captures a type and optional q-value while ignoring other parameters.
         $pattern = '/(?<type>[^,;]+)(?:;[^,]*q=(?<q>[0-9.]+))?/';
 
-        if (\preg_match_all($pattern, $header, $matches, PREG_SET_ORDER)) {
+        if (preg_match_all($pattern, $header, $matches, \PREG_SET_ORDER)) {
             foreach ($matches as $match) {
-                $type = \mb_trim($match['type']);
+                $type = mb_trim($match['type']);
                 $q    = isset($match['q']) && '' !== $match['q'] ? (float) $match['q'] : 1.0;
 
                 $preferences[] = [
@@ -101,7 +101,7 @@ enum Accept: string
             }
         }
 
-        \usort(
+        usort(
             $preferences,
             static function (array $a, array $b): int {
                 if ($a['q'] !== $b['q']) {
@@ -122,7 +122,6 @@ enum Accept: string
      * - "* /*"    → specificity 0 (least specific)
      * - "type/*" → specificity 1 (partially specific)
      * - "type/subtype" → specificity 2 (fully specific)
-     *
      * This value SHALL be used to sort MIME types when q-values are equal.
      *
      * @param string $type the MIME type to evaluate
@@ -135,7 +134,7 @@ enum Accept: string
             return 0;
         }
 
-        if (\str_ends_with($type, '/*')) {
+        if (str_ends_with($type, '/*')) {
             return 1;
         }
 
@@ -152,7 +151,7 @@ enum Accept: string
      * - A "type/*" wildcard MUST match any subtype within the given type.
      *
      * @param string $preference the MIME type from the client preference list
-     * @param string $supported  the server-supported MIME type
+     * @param string $supported the server-supported MIME type
      *
      * @return bool true if the supported type matches the preference
      */
@@ -162,9 +161,9 @@ enum Accept: string
             return true;
         }
 
-        if (\str_ends_with($preference, '/*')) {
-            $prefix = \strtok($preference, '/');
-            if (\str_starts_with($supported, $prefix . '/')) {
+        if (str_ends_with($preference, '/*')) {
+            $prefix = strtok($preference, '/');
+            if (str_starts_with($supported, $prefix . '/')) {
                 return true;
             }
         }

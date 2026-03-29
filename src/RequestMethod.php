@@ -8,9 +8,12 @@ declare(strict_types=1);
  * This source file is subject to the license bundled
  * with this source code in the file LICENSE.
  *
- * @link      https://github.com/php-fast-forward/http-message
- * @copyright Copyright (c) 2025 Felipe Sayão Lobato Abreu <github@mentordosnerds.com>
+ * @copyright Copyright (c) 2025-2026 Felipe Sayão Lobato Abreu <github@mentordosnerds.com>
  * @license   https://opensource.org/licenses/MIT MIT License
+ *
+ * @see       https://github.com/php-fast-forward/http-message
+ * @see       https://github.com/php-fast-forward
+ * @see       https://datatracker.ietf.org/doc/html/rfc2119
  */
 
 namespace FastForward\Http\Message;
@@ -24,8 +27,6 @@ namespace FastForward\Http\Message;
  *
  * Implementations utilizing this enum MUST validate incoming or outgoing request methods against this set to ensure
  * protocol compliance and interoperability.
- *
- * @package FastForward\Http\Message
  */
 enum RequestMethod: string
 {
@@ -61,6 +62,8 @@ enum RequestMethod: string
 
     /**
      * Returns true if the method is considered safe (does not modify server state).
+     *
+     * @return bool
      */
     public function isSafe(): bool
     {
@@ -69,6 +72,8 @@ enum RequestMethod: string
 
     /**
      * Returns true if the method is idempotent (multiple identical requests have the same effect as a single one).
+     *
+     * @return bool
      */
     public function isIdempotent(): bool
     {
@@ -77,6 +82,8 @@ enum RequestMethod: string
 
     /**
      * Returns true if the method is considered cacheable by default.
+     *
+     * @return bool
      */
     public function isCacheable(): bool
     {

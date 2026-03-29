@@ -8,9 +8,12 @@ declare(strict_types=1);
  * This source file is subject to the license bundled
  * with this source code in the file LICENSE.
  *
- * @link      https://github.com/php-fast-forward/http-message
- * @copyright Copyright (c) 2025 Felipe Sayão Lobato Abreu <github@mentordosnerds.com>
+ * @copyright Copyright (c) 2025-2026 Felipe Sayão Lobato Abreu <github@mentordosnerds.com>
  * @license   https://opensource.org/licenses/MIT MIT License
+ *
+ * @see       https://github.com/php-fast-forward/http-message
+ * @see       https://github.com/php-fast-forward
+ * @see       https://datatracker.ietf.org/doc/html/rfc2119
  */
 
 namespace FastForward\Http\Message\Header;
@@ -109,12 +112,11 @@ enum ContentEncoding: string
      * - Interpret “q=0” as explicit rejection.
      * - Support wildcards (“*”) as fallback.
      * - Recognize “x-gzip” as an alias for the gzip encoding.
-     *
      * If an encoding is not explicitly listed and no wildcard is present,
      * the encoding SHOULD be considered acceptable unless the header
      * exclusively lists explicit rejections.
      *
-     * @param self   $encoding             the encoding to evaluate
+     * @param self $encoding the encoding to evaluate
      * @param string $acceptEncodingHeader the raw `Accept-Encoding` header value
      *
      * @return bool true if the encoding is acceptable according to negotiation rules
@@ -124,15 +126,15 @@ enum ContentEncoding: string
         $preferences = [];
         $pattern     = '/(?<name>[a-z*-]+)(?:;\s*q=(?<q>[0-9.]+))?/i';
 
-        if (\preg_match_all($pattern, $acceptEncodingHeader, $matches, PREG_SET_ORDER)) {
+        if (preg_match_all($pattern, $acceptEncodingHeader, $matches, \PREG_SET_ORDER)) {
             foreach ($matches as $match) {
-                $name                               = \mb_trim($match['name']);
+                $name                               = mb_trim($match['name']);
                 $q                                  = isset($match['q']) && '' !== $match['q'] ? (float) $match['q'] : 1.0;
-                $preferences[\mb_strtolower($name)] = $q;
+                $preferences[mb_strtolower($name)] = $q;
             }
         }
 
-        $encodingName = \mb_strtolower($encoding->value);
+        $encodingName = mb_strtolower($encoding->value);
         $aliases      = self::getAliases($encoding);
 
         $checkNames = [$encodingName, ...$aliases];

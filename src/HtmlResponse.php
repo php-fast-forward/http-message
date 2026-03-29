@@ -8,9 +8,12 @@ declare(strict_types=1);
  * This source file is subject to the license bundled
  * with this source code in the file LICENSE.
  *
- * @link      https://github.com/php-fast-forward/http-message
- * @copyright Copyright (c) 2025 Felipe Sayão Lobato Abreu <github@mentordosnerds.com>
+ * @copyright Copyright (c) 2025-2026 Felipe Sayão Lobato Abreu <github@mentordosnerds.com>
  * @license   https://opensource.org/licenses/MIT MIT License
+ *
+ * @see       https://github.com/php-fast-forward/http-message
+ * @see       https://github.com/php-fast-forward
+ * @see       https://datatracker.ietf.org/doc/html/rfc2119
  */
 
 namespace FastForward\Http\Message;
@@ -27,8 +30,6 @@ use Nyholm\Psr7\Stream;
  * This class MUST be used to generate HTTP responses with a `text/html` content type.
  * It automatically sets the 'Content-Type' header, encodes the body using the specified charset,
  * and applies the HTTP 200 (OK) status code by default.
- *
- * @package FastForward\Http\Message
  */
 final class HtmlResponse extends Response
 {
@@ -39,9 +40,9 @@ final class HtmlResponse extends Response
      * and initialize the response body with the provided HTML content. The response status code
      * will be set to 200 (OK) by default, with the corresponding reason phrase.
      *
-     * @param string                         $html    the HTML content to send in the response body
-     * @param string                         $charset The character encoding to declare in the 'Content-Type' header. Defaults to 'utf-8'.
-     * @param array<string, string|string[]> $headers optional additional headers to include in the response
+     * @param string $html the HTML content to send in the response body
+     * @param string $charset The character encoding to declare in the 'Content-Type' header. Defaults to 'utf-8'.
+     * @param array $headers optional additional headers to include in the response
      */
     public function __construct(string $html, string $charset = 'utf-8', array $headers = [])
     {

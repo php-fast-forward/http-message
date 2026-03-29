@@ -1,5 +1,8 @@
 .idea/
+.vscode/
 public/
+tmp/
 vendor/
 composer.lock
 *.cache
+TO-DO.md

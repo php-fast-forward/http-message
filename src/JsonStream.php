@@ -8,13 +8,18 @@ declare(strict_types=1);
  * This source file is subject to the license bundled
  * with this source code in the file LICENSE.
  *
- * @link      https://github.com/php-fast-forward/http-message
- * @copyright Copyright (c) 2025 Felipe Sayão Lobato Abreu <github@mentordosnerds.com>
+ * @copyright Copyright (c) 2025-2026 Felipe Sayão Lobato Abreu <github@mentordosnerds.com>
  * @license   https://opensource.org/licenses/MIT MIT License
+ *
+ * @see       https://github.com/php-fast-forward/http-message
+ * @see       https://github.com/php-fast-forward
+ * @see       https://datatracker.ietf.org/doc/html/rfc2119
  */
 
 namespace FastForward\Http\Message;
 
+use InvalidArgumentException;
+use JsonException;
 use Nyholm\Psr7\Stream;
 
 /**
@@ -26,8 +31,6 @@ use Nyholm\Psr7\Stream;
  *
  * Implementations of this class MUST properly handle JSON encoding errors and SHALL explicitly
  * prohibit the inclusion of resource types within the JSON payload.
- *
- * @package FastForward\Http\Message
  */
 final class JsonStream extends Stream implements PayloadStreamInterface
 {
@@ -39,17 +42,7 @@ final class JsonStream extends Stream implements PayloadStreamInterface
      *
      * @var int
      */
-    public const ENCODING_OPTIONS = JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE;
-
-    /**
-     * @var mixed The decoded payload provided to the stream. This MUST be JSON-encodable and MUST NOT contain resources.
-     */
-    private mixed $payload = [];
-
-    /**
-     * @var int the JSON encoding options to be applied
-     */
-    private int $encodingOptions;
+    public const ENCODING_OPTIONS = \JSON_THROW_ON_ERROR | \JSON_UNESCAPED_SLASHES | \JSON_UNESCAPED_UNICODE;
 
     /**
      * Constructs a new JsonStream instance with the provided payload.
@@ -57,14 +50,13 @@ final class JsonStream extends Stream implements PayloadStreamInterface
      * The payload SHALL be JSON-encoded and written to an in-memory stream. The original payload is retained
      * in its decoded form for later access via getPayload().
      *
-     * @param mixed $payload         The data to encode as JSON. MUST be JSON-encodable. Resources are explicitly prohibited.
-     * @param int   $encodingOptions Optional JSON encoding flags. If omitted, ENCODING_OPTIONS will be applied.
+     * @param mixed $payload The data to encode as JSON. MUST be JSON-encodable. Resources are explicitly prohibited.
+     * @param int $encodingOptions Optional JSON encoding flags. If omitted, ENCODING_OPTIONS will be applied.
      */
-    public function __construct(mixed $payload = [], int $encodingOptions = self::ENCODING_OPTIONS)
-    {
-        $this->payload         = $payload;
-        $this->encodingOptions = $encodingOptions;
-
+    public function __construct(
+        private readonly mixed $payload = [],
+        private readonly int $encodingOptions = self::ENCODING_OPTIONS
+    ) {
         parent::__construct(fopen('php://temp', 'wb+'));
 
         $this->write($this->jsonEncode($this->payload, $this->encodingOptions));
@@ -104,23 +96,23 @@ final class JsonStream extends Stream implements PayloadStreamInterface
      * If the provided data is a resource, this method SHALL throw an \InvalidArgumentException,
      * as resource types are not supported by JSON.
      *
-     * @param mixed $data            the data to encode as JSON
-     * @param int   $encodingOptions JSON encoding options to apply. JSON_THROW_ON_ERROR will always be enforced.
+     * @param mixed $data the data to encode as JSON
+     * @param int $encodingOptions JSON encoding options to apply. JSON_THROW_ON_ERROR will always be enforced.
      *
      * @return string the JSON-encoded string representation of the data
      *
-     * @throws \InvalidArgumentException if the data contains a resource
-     * @throws \JsonException            if JSON encoding fails
+     * @throws InvalidArgumentException if the data contains a resource
+     * @throws JsonException if JSON encoding fails
      */
     private function jsonEncode(mixed $data, int $encodingOptions): string
     {
         if (\is_resource($data)) {
-            throw new \InvalidArgumentException('Cannot JSON encode resources.');
+            throw new InvalidArgumentException('Cannot JSON encode resources.');
         }
 
         // Reset potential previous errors
         json_encode(null);
 
-        return json_encode($data, $encodingOptions | JSON_THROW_ON_ERROR);
+        return json_encode($data, $encodingOptions | \JSON_THROW_ON_ERROR);
     }
 }

@@ -8,9 +8,12 @@ declare(strict_types=1);
  * This source file is subject to the license bundled
  * with this source code in the file LICENSE.
  *
- * @link      https://github.com/php-fast-forward/http-message
- * @copyright Copyright (c) 2025 Felipe Sayão Lobato Abreu <github@mentordosnerds.com>
+ * @copyright Copyright (c) 2025-2026 Felipe Sayão Lobato Abreu <github@mentordosnerds.com>
  * @license   https://opensource.org/licenses/MIT MIT License
+ *
+ * @see       https://github.com/php-fast-forward/http-message
+ * @see       https://github.com/php-fast-forward
+ * @see       https://datatracker.ietf.org/doc/html/rfc2119
  */
 
 namespace FastForward\Http\Message\Tests\Header;
@@ -38,13 +41,19 @@ use Psr\Http\Message\RequestInterface;
 #[UsesClass(AwsCredential::class)]
 final class AuthorizationTest extends TestCase
 {
+    /**
+     * @param string $header
+     * @param array|null $expected
+     *
+     * @return void
+     */
     #[Covers(Authorization::class, 'parseApiKey')]
     #[Covers(Authorization::class, 'parseBasic')]
     #[Covers(Authorization::class, 'parseBearer')]
     #[Covers(Authorization::class, 'parseDigest')]
     #[Covers(Authorization::class, 'parseAws')]
     #[DataProvider('providerParse')]
-    public function testParse(string $header, $expected): void
+    public function testParse(string $header, ?array $expected): void
     {
         $result = Authorization::parse($header);
 
@@ -53,14 +62,24 @@ final class AuthorizationTest extends TestCase
         } else {
             self::assertInstanceOf($expected['class'], $result);
             foreach ($expected['properties'] as $property => $value) {
-                self::assertSame($value, $result->{$property}, "Property '{$property}' does not match expected value.");
+                self::assertSame(
+                    $value,
+                    $result->{$property},
+                    \sprintf("Property '%s' does not match expected value.", $property)
+                );
             }
         }
     }
 
+    /**
+     * @param array $headers
+     * @param array|null $expected
+     *
+     * @return void
+     */
     #[Covers(Authorization::class, 'fromHeaderCollection')]
     #[DataProvider('providerFromHeaderCollection')]
-    public function testFromHeaderCollection(array $headers, $expected): void
+    public function testFromHeaderCollection(array $headers, ?array $expected): void
     {
         $result = Authorization::fromHeaderCollection($headers);
 
@@ -69,17 +88,28 @@ final class AuthorizationTest extends TestCase
         } else {
             self::assertInstanceOf($expected['class'], $result);
             foreach ($expected['properties'] as $property => $value) {
-                self::assertSame($value, $result->{$property}, "Property '{$property}' does not match expected value.");
+                self::assertSame(
+                    $value,
+                    $result->{$property},
+                    \sprintf("Property '%s' does not match expected value.", $property)
+                );
             }
         }
     }
 
+    /**
+     * @param array $headers
+     * @param array|null $expected
+     *
+     * @return void
+     */
     #[Covers(Authorization::class, 'fromRequest')]
     #[DataProvider('providerFromRequest')]
-    public function testFromRequest(array $headers, $expected): void
+    public function testFromRequest(array $headers, ?array $expected): void
     {
         $request = $this->createMock(RequestInterface::class);
-        $request->method('getHeaders')->willReturn($headers);
+        $request->method('getHeaders')
+            ->willReturn($headers);
 
         $result = Authorization::fromRequest($request);
 
@@ -88,11 +118,18 @@ final class AuthorizationTest extends TestCase
         } else {
             self::assertInstanceOf($expected['class'], $result);
             foreach ($expected['properties'] as $property => $value) {
-                self::assertSame($value, $result->{$property}, "Property '{$property}' does not match expected value.");
+                self::assertSame(
+                    $value,
+                    $result->{$property},
+                    \sprintf("Property '%s' does not match expected value.", $property)
+                );
             }
         }
     }
 
+    /**
+     * @return array
+     */
     public static function providerParse(): array
     {
         return [
@@ -100,28 +137,38 @@ final class AuthorizationTest extends TestCase
                 'ApiKey my-super-secret-key',
                 [
                     'class'      => ApiKeyCredential::class,
-                    'properties' => ['key' => 'my-super-secret-key'],
+                    'properties' => [
+                        'key' => 'my-super-secret-key',
+                    ],
                 ],
             ],
             'valid basic' => [
                 'Basic dXNlcjpwYXNz', // user:pass
                 [
                     'class'      => BasicCredential::class,
-                    'properties' => ['username' => 'user', 'password' => 'pass'],
+                    'properties' => [
+                        'username' => 'user',
+                        'password' => 'pass',
+                    ],
                 ],
             ],
             'valid basic with empty password' => [
                 'Basic dXNlcjo=', // user:
                 [
                     'class'      => BasicCredential::class,
-                    'properties' => ['username' => 'user', 'password' => ''],
+                    'properties' => [
+                        'username' => 'user',
+                        'password' => '',
+                    ],
                 ],
             ],
             'valid bearer' => [
                 'Bearer my-secret-token',
                 [
                     'class'      => BearerCredential::class,
-                    'properties' => ['token' => 'my-secret-token'],
+                    'properties' => [
+                        'token' => 'my-secret-token',
+                    ],
                 ],
             ],
             'valid digest' => [
@@ -182,101 +229,147 @@ final class AuthorizationTest extends TestCase
         ];
     }
 
+    /**
+     * @return array
+     */
     public static function providerFromHeaderCollection(): array
     {
         return [
             'header present (lowercase)' => [
-                ['authorization' => 'Basic dXNlcjpwYXNz'],
+                [
+                    'authorization' => 'Basic dXNlcjpwYXNz',
+                ],
                 [
                     'class'      => BasicCredential::class,
-                    'properties' => ['username' => 'user', 'password' => 'pass'],
+                    'properties' => [
+                        'username' => 'user',
+                        'password' => 'pass',
+                    ],
                 ],
             ],
             'header present (uppercase)' => [
-                ['Authorization' => 'Bearer my-secret-token'],
+                [
+                    'Authorization' => 'Bearer my-secret-token',
+                ],
                 [
                     'class'      => BearerCredential::class,
-                    'properties' => ['token' => 'my-secret-token'],
+                    'properties' => [
+                        'token' => 'my-secret-token',
+                    ],
                 ],
             ],
             'header present (mixed case)' => [
-                ['aUtHoRiZaTiOn' => 'ApiKey my-key'],
+                [
+                    'aUtHoRiZaTiOn' => 'ApiKey my-key',
+                ],
                 [
                     'class'      => ApiKeyCredential::class,
-                    'properties' => ['key' => 'my-key'],
+                    'properties' => [
+                        'key' => 'my-key',
+                    ],
                 ],
             ],
             'header present (array value)' => [
-                ['Authorization' => ['Bearer my-secret-token', 'another-token']],
+                [
+                    'Authorization' => ['Bearer my-secret-token', 'another-token'],
+                ],
                 [
                     'class'      => BearerCredential::class,
-                    'properties' => ['token' => 'my-secret-token'],
+                    'properties' => [
+                        'token' => 'my-secret-token',
+                    ],
                 ],
             ],
             'header missing' => [
-                ['x-custom-header' => 'value'],
+                [
+                    'x-custom-header' => 'value',
+                ],
                 null,
             ],
-            'empty header collection' => [
-                [],
-                null,
-            ],
+            'empty header collection' => [[], null],
             'empty authorization header' => [
-                ['Authorization' => ''],
+                [
+                    'Authorization' => '',
+                ],
                 null,
             ],
             'malformed authorization header' => [
-                ['Authorization' => 'Basic'],
+                [
+                    'Authorization' => 'Basic',
+                ],
                 null,
             ],
         ];
     }
 
+    /**
+     * @return array
+     */
     public static function providerFromRequest(): array
     {
         return [
             'header present (lowercase)' => [
-                ['authorization' => ['Basic dXNlcjpwYXNz']],
+                [
+                    'authorization' => ['Basic dXNlcjpwYXNz'],
+                ],
                 [
                     'class'      => BasicCredential::class,
-                    'properties' => ['username' => 'user', 'password' => 'pass'],
+                    'properties' => [
+                        'username' => 'user',
+                        'password' => 'pass',
+                    ],
                 ],
             ],
             'header present (uppercase)' => [
-                ['Authorization' => ['Bearer my-secret-token']],
+                [
+                    'Authorization' => ['Bearer my-secret-token'],
+                ],
                 [
                     'class'      => BearerCredential::class,
-                    'properties' => ['token' => 'my-secret-token'],
+                    'properties' => [
+                        'token' => 'my-secret-token',
+                    ],
                 ],
             ],
             'header present (mixed case)' => [
-                ['aUtHoRiZaTiOn' => ['ApiKey my-key']],
+                [
+                    'aUtHoRiZaTiOn' => ['ApiKey my-key'],
+                ],
                 [
                     'class'      => ApiKeyCredential::class,
-                    'properties' => ['key' => 'my-key'],
+                    'properties' => [
+                        'key' => 'my-key',
+                    ],
                 ],
             ],
             'header present (multiple values)' => [
-                ['Authorization' => ['Bearer my-secret-token', 'another-token']],
+                [
+                    'Authorization' => ['Bearer my-secret-token', 'another-token'],
+                ],
                 [
                     'class'      => BearerCredential::class,
-                    'properties' => ['token' => 'my-secret-token'],
+                    'properties' => [
+                        'token' => 'my-secret-token',
+                    ],
                 ],
             ],
             'header missing' => [
-                ['x-custom-header' => ['value']],
+                [
+                    'x-custom-header' => ['value'],
+                ],
                 null,
             ],
-            'empty header collection' => [
-                [],
-                null,
-            ],
+            'empty header collection' => [[], null],
             'empty authorization header' => [
-                ['Authorization' => ['']],
+                [
+                    'Authorization' => [''],
+                ],
                 null,
             ],
             'malformed authorization header' => [
-                ['Authorization' => ['Basic']],
+                [
+                    'Authorization' => ['Basic'],
+                ],
                 null,
             ],
         ];
