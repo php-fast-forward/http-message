@@ -114,7 +114,7 @@ src/
 ---
 
 ## 🛠️ Versioning & Breaking Changes
-- v2.0: PHP 8.3+ required, stricter typing, improved docs
+- v1.4: PHP 8.3+ required, stricter typing, improved docs
 - v1.0: Initial release
 
 ---
