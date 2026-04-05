@@ -1,32 +1,59 @@
 Integration
 ===========
 
-Fast Forward HTTP Message is designed to work seamlessly with any PSR-7 compatible framework or library. You can use its response and header classes in any context where PSR-7 messages are accepted.
+Fast Forward HTTP Message is designed to fit into existing PSR-based applications with very little setup.
+The package does not try to replace your framework or HTTP stack; it provides small, composable pieces instead.
 
-**Integration Tips:**
---------------------
+Using the Responses in Request Handlers
+---------------------------------------
 
-- Use the provided response classes (``JsonResponse``, ``TextResponse``, ``EmptyResponse``, ``RedirectResponse``) as drop-in replacements for standard PSR-7 responses.
-- All classes are immutable and strictly typed, making them safe for use in concurrent or asynchronous environments.
-- The header utility classes can be used to parse, validate, and construct HTTP headers in a robust and reusable way.
-- For dependency injection, register the classes in your PSR-11 container.
-
-**Extending the Library:**
--------------------------
-
-You may extend or compose the provided classes to fit your application's needs. All interfaces are public and designed for extension.
+Because all built-in responses are standard PSR-7 response objects, they can be returned directly from controllers,
+request handlers, or middleware pipelines:
 
 .. code-block:: php
 
-   // Example of extending a custom response
-   class MyCustomResponse extends \FastForward\Http\Message\JsonResponse {
-       // Custom logic here
+   use FastForward\Http\Message\JsonResponse;
+   use FastForward\Http\Message\StatusCode;
+
+   $response = (new JsonResponse(['ok' => true]))
+       ->withStatus(StatusCode::Accepted->value);
+
+Integrating in PSR-15 Middleware
+--------------------------------
+
+Header helpers are especially useful at middleware boundaries:
+
+.. code-block:: php
+
+   use FastForward\Http\Message\Header\Authorization;
+   use FastForward\Http\Message\Header\Authorization\BearerCredential;
+   use FastForward\Http\Message\JsonResponse;
+   use Psr\Http\Message\ResponseInterface;
+   use Psr\Http\Message\ServerRequestInterface;
+
+   function authorize(ServerRequestInterface $request): ResponseInterface
+   {
+       $credential = Authorization::fromRequest($request);
+
+       if (! $credential instanceof BearerCredential) {
+           return new JsonResponse(['error' => 'Missing bearer token']);
+       }
+
+       return new JsonResponse(['token' => $credential->token]);
    }
 
-**Advanced Tips:**
+Container and Factory Integration
+---------------------------------
 
-- Combine with :doc:`../api/headers` for custom authentication.
-- Use ``withPayload()`` for dynamic responses.
-- Easily integrate with PSR-15 middlewares.
+This package has no built-in service provider. That is usually fine because the response classes are simple to instantiate.
+If your application needs formal PSR-11 or PSR-17 integration, use
+`fast-forward/http-factory <https://github.com/php-fast-forward/http-factory>`_.
 
-**See also:** :doc:`../api/responses`, :doc:`../api/payload`, :doc:`../usage/use-cases`
+Interoperability Guidelines
+---------------------------
+
+- Treat the built-in classes as drop-in PSR-7 responses.
+- Use enum helpers close to HTTP boundaries, where raw headers and methods enter your application.
+- Keep transport concerns separate from domain logic by returning the final response only at the edge.
+
+See also :doc:`customization` and :doc:`troubleshooting`.

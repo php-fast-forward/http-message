@@ -1,31 +1,23 @@
 Getting Started
 ===============
 
-Installation
-------------
+This section is the shortest path from installation to a useful response object.
+If you are new to PSR-7, start here before diving into the API reference.
 
-Fast Forward HTTP Message requires **PHP 8.3 or higher** and can be installed via Composer:
+What This Package Gives You
+---------------------------
 
-.. code-block:: bash
+- Ready-to-use response classes for JSON, HTML, plain text, empty responses, and redirects.
+- A payload-aware JSON stream that lets you keep working with structured data after encoding it.
+- Typed enums and helpers for content negotiation, authorization parsing, encodings, request methods, and status codes.
+- A small API surface that stays compatible with the rest of the PSR-7 ecosystem.
 
-   composer require fast-forward/http-message
+Recommended Reading Order
+-------------------------
 
-Overview
---------
-
-Fast Forward HTTP Message provides a set of utility classes and interfaces for working with PSR-7 HTTP messages. It is designed to be fully PSR-7 compliant, strictly typed, and immutable by design. The library offers convenient support for JSON and payload-centric responses, making it easy to build modern PHP applications.
-
-Key Features:
-
-- Fully PSR-7 compliant
-- Strictly typed for PHP 8.3+
-- Immutable by design
-- Convenient JSON response with automatic headers
-- Payload-aware interfaces for reusable patterns
-- No external dependencies beyond PSR-7
-
-Quickstart
-----------
+1. :doc:`installation`
+2. :doc:`quickstart`
+3. :doc:`../usage/index`
 
 .. toctree::
    :maxdepth: 1

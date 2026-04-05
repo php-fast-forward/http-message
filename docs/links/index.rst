@@ -1,11 +1,14 @@
 Links Index
 ===========
 
-This section provides references to all key dependencies and related projects for Fast Forward HTTP Message, including PSR-7 implementations, factories, and ecosystem links.
+This section collects external references that help you place the package in the broader ecosystem:
+project pages, dependencies, companion packages, standards, and coverage resources.
 
 .. toctree::
    :maxdepth: 1
 
    project-links
-   related-projects
    dependencies
+   related-projects
+   standards
+   coverage

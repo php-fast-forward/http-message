@@ -1,51 +1,118 @@
-Headers
-=======
+Header Utilities
+================
 
-The library provides utility classes for working with HTTP headers:
+The header helpers in this package cover a narrow but practical set of repetitive HTTP tasks:
+content negotiation, content type inspection, encoding support, transfer coding detection,
+and authorization parsing.
 
-.. list-table:: Header Utilities
-     :header-rows: 1
+.. list-table:: Public Header-Related Types
+   :header-rows: 1
 
-     * - Class
-         - Description
-     * - ``ContentType``
-         - Manage the ``Content-Type`` header
-     * - ``Accept``
-         - Parse and represent the ``Accept`` header
-     * - ``ContentEncoding``
-         - Handle the ``Content-Encoding`` header
-     * - ``TransferEncoding``
-         - Handle the ``Transfer-Encoding`` header
-     * - ``Authorization``
-         - Parse and represent the ``Authorization`` header (API Key, Basic, Bearer, Digest, AWS)
+   * - Name
+     - Kind
+     - Primary Use
+   * - ``Accept``
+     - Enum
+     - Choose the best response format from an ``Accept`` header.
+   * - ``ContentType``
+     - Enum
+     - Parse, inspect, and build ``Content-Type`` values.
+   * - ``ContentEncoding``
+     - Enum
+     - Evaluate whether a compression format is acceptable.
+   * - ``TransferEncoding``
+     - Enum
+     - Detect chunked transfer coding.
+   * - ``Authorization``
+     - Enum with helper methods
+     - Parse supported ``Authorization`` schemes into credential objects.
+   * - ``AuthorizationCredential``
+     - Interface
+     - Marker interface implemented by all parsed authorization credentials.
 
-**Authorization Credentials**
-----------------------------
+Accept
+------
 
-The ``Authorization`` header parser returns credential objects implementing ``AuthorizationCredential``:
+``Accept::getBestMatch()`` compares a raw ``Accept`` header against the list of response types your application supports.
+It understands:
 
-- ``ApiKeyCredential``
-- ``BasicCredential``
-- ``BearerCredential``
-- ``DigestCredential``
-- ``AwsCredential``
+- q-values such as ``application/json;q=0.9``;
+- wildcard ranges such as ``*/*`` and ``text/*``;
+- preference ordering between more and less specific types.
 
-Each credential class is immutable and exposes the relevant authentication data in a safe, structured form.
+This makes it a good fit for endpoints that can return either HTML or JSON.
 
-**Example:**
+ContentType
+-----------
 
-.. code-block:: php
+``ContentType`` is useful when you want to avoid manual string parsing:
 
-    use FastForward\Http\Message\Header\Authorization;
-    $credential = Authorization::fromHeaderCollection($headers);
-    if ($credential instanceof AuthorizationCredential) {
-        // Handle the credential according to its type
-    }
+- ``fromHeaderString()`` extracts the enum case from a header value such as ``application/json; charset=utf-8``;
+- ``getCharset()`` returns the declared charset when present;
+- ``withCharset()`` builds a correctly formatted header string;
+- ``isJson()``, ``isXml()``, ``isText()``, and ``isMultipart()`` make semantic checks explicit.
 
-**Advanced Tips:**
+ContentEncoding
+---------------
 
-- Use the utilities to validate, build, and parse headers robustly.
-- Combine with :doc:`responses` for custom responses.
-- For advanced authentication, use the credential classes.
+``ContentEncoding::isSupported()`` answers a common server-side question:
+"may I send this compressed representation to this client?"
 
-**See also:** :doc:`responses`, :doc:`payload`, :doc:`../usage/use-cases`
+The helper handles:
+
+- explicit support such as ``gzip, br``;
+- explicit rejection with ``q=0``;
+- wildcard support;
+- the legacy ``x-gzip`` alias.
+
+TransferEncoding
+----------------
+
+``TransferEncoding::isChunked()`` performs a tolerant, case-insensitive check for ``chunked`` inside a raw
+``Transfer-Encoding`` header. It is useful when you need to inspect inbound or outbound message framing behavior.
+
+Authorization
+-------------
+
+``Authorization`` provides three entry points:
+
+- ``parse()`` for a raw authorization header string;
+- ``fromHeaderCollection()`` for a header array;
+- ``fromRequest()`` for a PSR-7 request.
+
+All helpers return either an ``AuthorizationCredential`` implementation or ``null`` when the header is missing,
+unsupported, or malformed.
+
+Supported Credential Types
+--------------------------
+
+.. list-table:: Parsed Authorization Credentials
+   :header-rows: 1
+
+   * - Scheme
+     - Returned Class
+     - Main Properties
+   * - ``ApiKey``
+     - ``ApiKeyCredential``
+     - ``key``
+   * - ``Basic``
+     - ``BasicCredential``
+     - ``username``, ``password``
+   * - ``Bearer``
+     - ``BearerCredential``
+     - ``token``
+   * - ``Digest``
+     - ``DigestCredential``
+     - ``username``, ``realm``, ``nonce``, ``uri``, ``response``, and other digest fields
+   * - ``AWS4-HMAC-SHA256``
+     - ``AwsCredential``
+     - ``algorithm``, ``credentialScope``, ``signedHeaders``, ``signature``
+
+Beginner Notes
+--------------
+
+- These helpers parse and normalize data. They do not authenticate users by themselves.
+- Treat every returned credential object as sensitive data.
+- ``Authorization`` expects one of the supported schemes defined by the package.
+
+For runnable examples, see :doc:`../usage/header-utilities`.

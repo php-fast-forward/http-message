@@ -1,44 +1,79 @@
 Payload Interfaces and Streams
-=============================
+==============================
 
-The library introduces several interfaces and classes for working with payloads:
+Payload support is the feature that makes this package more than a collection of response shortcuts.
+It lets structured data stay available after it has been encoded into a PSR-7 body stream.
 
-.. list-table:: Payload Interfaces & Classes
+.. list-table:: Payload Building Blocks
    :header-rows: 1
 
    * - Name
-     - Description
+     - Kind
+     - Used By
+     - Purpose
    * - ``PayloadAwareInterface``
-     - For objects that encapsulate and manage a payload. Provides ``getPayload()``.
+     - Interface
+     - ``JsonResponse``, ``JsonStream``, custom implementations
+     - Exposes ``getPayload()`` so callers can retrieve the structured payload.
    * - ``PayloadImmutableInterface``
-     - For objects that allow immutable replacement of the payload. Provides ``withPayload($payload)``.
+     - Interface
+     - Internal composition building block
+     - Exposes ``withPayload()`` for immutable payload replacement.
    * - ``PayloadResponseInterface``
-     - Combines payload access and immutability for PSR-7 responses.
+     - Interface
+     - ``JsonResponse`` and custom responses
+     - Combines payload access with ``ResponseInterface``.
+   * - ``PayloadStreamInterface``
+     - Interface
+     - ``JsonStream`` and custom streams
+     - Combines payload access with ``StreamInterface``.
    * - ``JsonStream``
-     - Stream implementation that encodes a payload as JSON and retains the original decoded value.
+     - Concrete class
+     - ``JsonResponse`` and direct stream usage
+     - Encodes JSON while preserving the original payload value.
 
-All payload-related classes are strictly typed and immutable.
+Understanding the Interfaces
+----------------------------
 
-**Examples:**
+For everyday usage, most developers only need these two ideas:
+
+- a payload-aware response implements ``PayloadResponseInterface``;
+- a payload-aware stream implements ``PayloadStreamInterface``.
+
+``PayloadImmutableInterface`` is public because it participates in those contracts, but it is mainly useful
+when you build your own implementations.
+
+Working with JsonResponse
+-------------------------
 
 .. code-block:: php
 
-   // Working with payload in a JSON response
    use FastForward\Http\Message\JsonResponse;
+
    $response = new JsonResponse(['foo' => 'bar']);
-   $payload = $response->getPayload(); // ['foo' => 'bar']
-   $new = $response->withPayload(['baz' => 123]);
 
-   // Using JsonStream to handle JSON as a stream
+   $payload = $response->getPayload();      // ['foo' => 'bar']
+   $updated = $response->withPayload(['baz' => 123]);
+
+Working with JsonStream
+-----------------------
+
+.. code-block:: php
+
    use FastForward\Http\Message\JsonStream;
+
    $stream = new JsonStream(['foo' => 'bar']);
-   $json = (string) $stream; // '{"foo":"bar"}'
-   $payload = $stream->getPayload();
 
-**Advanced Tips:**
+   $json    = (string) $stream;             // {"foo":"bar"}
+   $payload = $stream->getPayload();        // ['foo' => 'bar']
 
-- Payloads can be any type serializable to JSON.
-- Use ``withPayload()`` to ensure immutability and avoid side effects.
-- Combine with :doc:`responses` to create custom responses.
+When This Matters
+-----------------
 
-**See also:** :doc:`responses`, :doc:`headers`, :doc:`../usage/use-cases`
+Payload-aware responses and streams are useful when:
+
+- middleware needs to inspect a JSON body without reparsing it;
+- you want a custom response object that still exposes structured data;
+- you care about immutability and do not want transport concerns to erase application data.
+
+See also :doc:`responses`, :doc:`../usage/json-response`, and :doc:`../usage/json-stream`.

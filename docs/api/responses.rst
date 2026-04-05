@@ -1,58 +1,77 @@
 Responses
 =========
 
-Fast Forward HTTP Message provides several response classes, all immutable and extending Nyholm's PSR-7 Response implementation:
+All built-in response classes extend ``Nyholm\Psr7\Response`` and remain fully compatible
+with PSR-7 consumers. They are immutable, strictly typed, and designed to remove repetitive
+response setup from application code.
 
-.. list-table:: Response Classes
+.. important::
+
+   The built-in response classes are ``final``. If you need custom behavior, prefer composition
+   or implement your own response on top of :doc:`payload` primitives. See :doc:`../advanced/customization`.
+
+.. list-table:: Built-In Response Classes
    :header-rows: 1
 
    * - Class
-     - Description
-     - Usage Example
+     - Default Status
+     - Automatic Headers
+     - Body Type
+     - Best Used For
    * - ``JsonResponse``
-     - JSON response with automatic headers
-     - Instantiated with an array or object as payload. Automatically sets Content-Type to application/json and serializes the payload.
-   * - ``TextResponse``
-     - Plain text response
-     - Instantiated with a string. Sets Content-Type to text/plain.
+     - ``200``
+     - ``Content-Type: application/json; charset=...``
+     - ``JsonStream``
+     - APIs and any response that should keep a structured payload available.
    * - ``HtmlResponse``
-     - HTML response with correct Content-Type
-     - Instantiated with a string containing HTML. Sets Content-Type to text/html.
+     - ``200``
+     - ``Content-Type: text/html; charset=...``
+     - Standard PSR-7 stream
+     - Markup rendered directly by browsers or simple web views.
+   * - ``TextResponse``
+     - ``200``
+     - ``Content-Type: text/plain; charset=...``
+     - Standard PSR-7 stream
+     - Diagnostics, simple text endpoints, and human-readable plain output.
    * - ``EmptyResponse``
-     - HTTP 204 No Content response
-     - Instantiated with no arguments. Sets status code 204 and an empty body.
+     - ``204``
+     - None
+     - Empty body
+     - Successful operations where returning a body would add no value.
    * - ``RedirectResponse``
-     - HTTP redirect response (301/302)
-     - Instantiated with a target URL and an optional boolean for permanent (301) or temporary (302) redirect. Sets Location header.
+     - ``302`` or ``301``
+     - ``Location``
+     - Empty body by default
+     - Redirect flows such as login redirects or resource moves.
 
-All response classes are strictly typed and designed for extension.
+How to Choose the Right Response
+--------------------------------
 
-**Examples:**
+- Use ``JsonResponse`` when clients expect machine-readable payloads.
+- Use ``HtmlResponse`` when clients will render HTML.
+- Use ``TextResponse`` when the payload is naturally just a string.
+- Use ``EmptyResponse`` when success is enough and the body should stay empty.
+- Use ``RedirectResponse`` when the next step is another URI.
+
+Common PSR-7 Operations Still Work
+----------------------------------
+
+The convenience classes do not hide the underlying PSR-7 API:
 
 .. code-block:: php
 
-    // JSON response
-    use FastForward\Http\Message\JsonResponse;
-    $response = new JsonResponse(['foo' => 'bar']);
-    echo $response->getHeaderLine('Content-Type'); // application/json; charset=utf-8
-    echo (string) $response->getBody(); // {"foo":"bar"}
+   use FastForward\Http\Message\JsonResponse;
+   use FastForward\Http\Message\StatusCode;
 
-    // Text response
-    use FastForward\Http\Message\TextResponse;
-    $text = new TextResponse('Hello, world!');
+   $response = (new JsonResponse(['saved' => true]))
+       ->withStatus(StatusCode::Created->value)
+       ->withHeader('X-Request-Id', 'req-123');
 
-    // Empty response
-    use FastForward\Http\Message\EmptyResponse;
-    $empty = new EmptyResponse();
+Response-Specific Guides
+------------------------
 
-    // Redirect response (permanent)
-    use FastForward\Http\Message\RedirectResponse;
-    $redirect = new RedirectResponse('https://example.com', true); // 301
-
-**Advanced Tips:**
-
-- You can extend any response class to add custom logic for your application.
-- All responses support PSR-7 methods like ``withHeader()``, ``withStatus()``, and are safe for concurrent use.
-- For payload manipulation, see :doc:`payload`.
-
-**See also:** :doc:`../usage/use-cases`, :doc:`payload`, :doc:`headers`
+- :doc:`../usage/json-response`
+- :doc:`../usage/html-response`
+- :doc:`../usage/text-response`
+- :doc:`../usage/empty-response`
+- :doc:`../usage/redirect-response`
