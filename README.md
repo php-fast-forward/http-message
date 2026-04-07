@@ -14,6 +14,7 @@ A modern PHP library for working with PSR-7 HTTP Messages, focusing on immutabil
 ---
 
 ## ✨ Features
+
 - ✅ Fully PSR-7 compliant
 - ✅ Strictly typed for PHP 8.3+
 - ✅ Immutable by design (PSR-7 standard)
@@ -28,6 +29,7 @@ A modern PHP library for working with PSR-7 HTTP Messages, focusing on immutabil
 ```bash
 composer require fast-forward/http-message
 ```
+
 Requirements: PHP 8.3+, Composer
 
 ---
@@ -57,18 +59,21 @@ echo $newResponse->getPayload()['success']; // false
 ```
 
 ### Text Response Example
+
 ```php
 use FastForward\Http\Message\TextResponse;
 $text = new TextResponse('Hello, world!');
 ```
 
 ### Empty Response Example
+
 ```php
 use FastForward\Http\Message\EmptyResponse;
 $empty = new EmptyResponse();
 ```
 
 ### Redirect Response Example
+
 ```php
 use FastForward\Http\Message\RedirectResponse;
 $redirect = new RedirectResponse('https://example.com', true); // Permanent redirect
@@ -77,19 +82,21 @@ $redirect = new RedirectResponse('https://example.com', true); // Permanent redi
 ---
 
 ## 🧰 API Summary
-| Class/Method         | Description                                      | Docs |
-|----------------------|--------------------------------------------------|------|
-| [JsonResponse](docs/api/responses.rst)         | JSON response with automatic headers              | [docs](docs/api/responses.rst) |
-| [TextResponse](docs/api/responses.rst)         | Plain text response                              | [docs](docs/api/responses.rst) |
-| [HtmlResponse](docs/api/responses.rst)         | HTML response with correct Content-Type           | [docs](docs/api/responses.rst) |
-| [EmptyResponse](docs/api/responses.rst)        | HTTP 204 No Content response                     | [docs](docs/api/responses.rst) |
-| [RedirectResponse](docs/api/responses.rst)     | HTTP redirect response (301/302)                 | [docs](docs/api/responses.rst) |
-| [getPayload()](docs/api/payload.rst)           | Returns the payload of the response              | [docs](docs/api/payload.rst) |
-| [withPayload($data)](docs/api/payload.rst)     | Returns a new instance with a different payload  | [docs](docs/api/payload.rst) |
+
+| Class/Method                               | Description                                     | Docs                           |
+|--------------------------------------------|-------------------------------------------------|--------------------------------|
+| [JsonResponse](docs/api/responses.rst)     | JSON response with automatic headers            | [docs](docs/api/responses.rst) |
+| [TextResponse](docs/api/responses.rst)     | Plain text response                             | [docs](docs/api/responses.rst) |
+| [HtmlResponse](docs/api/responses.rst)     | HTML response with correct Content-Type         | [docs](docs/api/responses.rst) |
+| [EmptyResponse](docs/api/responses.rst)    | HTTP 204 No Content response                    | [docs](docs/api/responses.rst) |
+| [RedirectResponse](docs/api/responses.rst) | HTTP redirect response (301/302)                | [docs](docs/api/responses.rst) |
+| [getPayload()](docs/api/payload.rst)       | Returns the payload of the response             | [docs](docs/api/payload.rst)   |
+| [withPayload($data)](docs/api/payload.rst) | Returns a new instance with a different payload | [docs](docs/api/payload.rst)   |
 
 ---
 
 ## 🔌 Integration
+
 - Works out of the box with any PSR-7 compatible framework or library
 - Designed to extend and complement [`nyholm/psr7`](https://github.com/Nyholm/psr7)
 - Can be used with [fast-forward/container](https://github.com/php-fast-forward/container) for dependency injection
@@ -97,7 +104,8 @@ $redirect = new RedirectResponse('https://example.com', true); // Permanent redi
 ---
 
 ## 📁 Directory Structure Example
-```
+
+```bash
 src/
 ├── EmptyResponse.php
 ├── HtmlResponse.php
@@ -110,6 +118,7 @@ src/
 ---
 
 ## ⚙️ Advanced/Customization
+
 - Extend any response class to add custom logic
 - Compose with other PSR-7 middlewares or response decorators
 - All interfaces are public and designed for extension
@@ -117,12 +126,14 @@ src/
 ---
 
 ## 🛠️ Versioning & Breaking Changes
+
 - v1.4: PHP 8.3+ required, stricter typing, improved docs
 - v1.0: Initial release
 
 ---
 
 ## ❓ FAQ
+
 **Q:** What PHP version is required?  
 **A:** PHP 8.3 or higher.
 
@@ -144,17 +155,20 @@ src/
 ---
 
 ## 🛡 License
+
 MIT © 2026 [Felipe Sayão Lobato Abreu](https://github.com/mentordosnerds)
 
 ---
 
 ## 🤝 Contributing
+
 Contributions, issues, and feature requests are welcome!  
 Feel free to open a [GitHub Issue](https://github.com/php-fast-forward/http-message/issues) or submit a Pull Request.
 
 ---
 
 ## 🔗 Links
+
 - [Repository](https://github.com/php-fast-forward/http-message)
 - [Packagist](https://packagist.org/packages/fast-forward/http-message)
 - [Sphinx Documentation](docs/index.rst)
