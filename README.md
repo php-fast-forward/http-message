@@ -1,10 +1,13 @@
 # Fast Forward HTTP Message
 
-[![PHP Version](https://img.shields.io/badge/php-^8.3-blue.svg)](https://www.php.net/releases/)
-[![License](https://img.shields.io/github/license/php-fast-forward/http-message.svg)](https://opensource.org/licenses/MIT)
-[![Tests](https://github.com/php-fast-forward/http-message/actions/workflows/tests.yml/badge.svg)](https://github.com/php-fast-forward/http-message/actions)
-[![Coverage](https://img.shields.io/badge/coverage-html-green?logo=phpunit&label=coverage&style=flat)](https://php-fast-forward.github.io/http-message/coverage/)
-[![Downloads](https://img.shields.io/packagist/dt/fast-forward/http-message)](https://packagist.org/packages/fast-forward/http-message)
+[![PHP Version](https://img.shields.io/badge/php-^8.3-777BB4?logo=php&logoColor=white)](https://www.php.net/releases/)
+[![Composer Package](https://img.shields.io/badge/composer-fast--forward%2Fhttp--message-F28D1A.svg?logo=composer&logoColor=white)](https://packagist.org/packages/fast-forward/http-message)
+[![PSR-7](https://img.shields.io/badge/PSR--7-http--message-777BB4?logo=php&logoColor=white)](https://www.php-fig.org/psr/psr-7/)
+[![Tests](https://img.shields.io/github/actions/workflow/status/php-fast-forward/http-message/tests.yml?logo=githubactions&logoColor=white&label=tests&color=22C55E)](https://github.com/php-fast-forward/http-message/actions/workflows/tests.yml)
+[![Coverage](https://img.shields.io/badge/coverage-phpunit-4ADE80?logo=php&logoColor=white)](https://php-fast-forward.github.io/http-message/coverage/index.html)
+[![Docs](https://img.shields.io/github/deployments/php-fast-forward/http-message/github-pages?logo=readthedocs&logoColor=white&label=docs&labelColor=1E293B&color=38BDF8&style=flat)](https://php-fast-forward.github.io/http-message/index.html)
+[![License](https://img.shields.io/github/license/php-fast-forward/http-message?color=64748B)](LICENSE)
+[![GitHub Sponsors](https://img.shields.io/github/sponsors/php-fast-forward?logo=githubsponsors&logoColor=white&color=EC4899)](https://github.com/sponsors/php-fast-forward)
 
 A modern PHP library for working with PSR-7 HTTP Messages, focusing on immutability, strict typing, and developer ergonomics. Part of the [Fast Forward](https://github.com/php-fast-forward) ecosystem.
 
