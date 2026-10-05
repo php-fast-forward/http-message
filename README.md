@@ -1,7 +1,7 @@
 # Fast Forward HTTP Message
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/php-fast-forward/http-message/5973c455836ad7ab50f53f9f0462fb1cbe26986f/docs/_static/mascot-banner.png" alt="Dash inspecting an immutable HTTP message and response formats" width="840">
+  <img src="docs/_static/mascot-banner.png" alt="Dash inspecting an immutable HTTP message and response formats" width="840">
 </p>
 
 [![PHP Version](https://img.shields.io/badge/php-^8.3-777BB4?logo=php&logoColor=white)](https://www.php.net/releases/)
