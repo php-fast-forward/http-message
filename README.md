@@ -1,5 +1,9 @@
 # Fast Forward HTTP Message
 
+<p align="center">
+  <img src="docs/_static/mascot-banner.png" alt="Dash inspecting an immutable HTTP message and response formats" width="840">
+</p>
+
 [![PHP Version](https://img.shields.io/badge/php-^8.3-777BB4?logo=php&logoColor=white)](https://www.php.net/releases/)
 [![Composer Package](https://img.shields.io/badge/composer-fast--forward%2Fhttp--message-F28D1A.svg?logo=composer&logoColor=white)](https://packagist.org/packages/fast-forward/http-message)
 [![PSR-7](https://img.shields.io/badge/PSR--7-http--message-777BB4?logo=php&logoColor=white)](https://www.php-fig.org/psr/psr-7/)
