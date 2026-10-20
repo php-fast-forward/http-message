@@ -36,9 +36,9 @@ results before merging. A GitHub App installation token is optional when CI
 must start without that approval; follow the selected release's
 [App configuration guide](https://github.com/php-fast-forward/changelog/blob/v0.3.0/docs/github-app.md).
 
-There was no central changelog before this integration. The first consolidation
-imports the existing GitHub Release text and renders version links in Keep a
-Changelog format. Releases `v1.4.0` and `v1.2.0` currently contain only comparison
+There was no central changelog before this integration. Its historical backfill
+preserves existing GitHub Release text and links verified ancestral versions in
+Keep a Changelog format. Releases `v1.4.0` and `v1.2.0` contain only comparison
 links; `v1.3.0`, `v1.1.0` and `v1.0.0` have empty bodies. These gaps cannot supply
 change descriptions or origin PRs, so do not invent them. New fragments resolve
 their origin PR during consolidation when GitHub can prove the association;
