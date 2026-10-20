@@ -34,7 +34,7 @@ With the default `GITHUB_TOKEN`, a generated version PR's `pull_request` runs
 can require approval. Select **Approve workflows to run**, then inspect the
 results before merging. A GitHub App installation token is optional when CI
 must start without that approval; follow the selected release's
-[App configuration guide](https://github.com/php-fast-forward/changelog/blob/v0.3.0/docs/github-app.md).
+[App configuration guide](https://github.com/php-fast-forward/changelog/blob/v0/docs/github-app.md).
 
 There was no central changelog before this integration. Its historical backfill
 preserves existing GitHub Release text and links verified ancestral versions in
