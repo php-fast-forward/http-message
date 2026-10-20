@@ -15,10 +15,13 @@ fragment with the contribution; leave published history intact and do not add
 an `Unreleased` section to `CHANGELOG.md`. After committing, validate the PR delta
 with `check --since=origin/main --source=github --no-interaction` using the same CLI.
 
-[The installed project skill](.agents/skills/fast-forward-changelog/SKILL.md)
-explains the contribution and release lifecycle. Check its integrity with
-`cpx --skip-local fast-forward/changelog skill:install --check --json`.
-The skill is a local instruction payload, independent of a Composer dependency.
+Run `composer install` to fetch the project skill into
+`.agents/skills/fast-forward-changelog`. The committed `skills.json` selects its
+GitHub source through `llm/skills`; generated `.agents` files stay out of Git.
+This does not install Changelog's runtime dependencies into the library.
+Inspect the copy with `composer skills:show` and refresh compatible versions with
+`composer skills:update --from=github`. Keep the skill under this manager's
+ownership; do not run the legacy Changelog skill installer on it.
 Its PHP integration example currently shows a CLI check outside the disposable
 target directory. Run that check with `--cwd=/absolute/project` to validate the
 same project. The bundled payload remains intact so native integrity checks and

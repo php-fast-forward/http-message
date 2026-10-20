@@ -6,3 +6,4 @@ vendor/
 composer.lock
 *.cache
 TO-DO.md
+/.agents/
