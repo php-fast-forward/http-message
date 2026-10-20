@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.1] - 2026-10-20
+
+### Changed
+
+- Automate changelog checks, version pull requests and approved releases with Fast Forward Changelog, with the project skill available to contributors. ([#6](https://github.com/php-fast-forward/http-message/pull/6))
+- Restore the Changelog skill from its GitHub source during Composer installation instead of committing a generated copy and separate installation receipt. ([#6](https://github.com/php-fast-forward/http-message/pull/6))
+
 ## [1.4.0] - 2026-03-29
 
 **Full Changelog**: https://github.com/php-fast-forward/http-message/compare/v1.3.0...v1.4.0
@@ -25,6 +32,7 @@ Release notes are unavailable for this version.
 
 Release notes are unavailable for this version.
 
+[1.4.1]: https://github.com/php-fast-forward/http-message/compare/v1.4.0...v1.4.1
 [1.4.0]: https://github.com/php-fast-forward/http-message/compare/v1.3.0...v1.4.0
 [1.3.0]: https://github.com/php-fast-forward/http-message/compare/v1.2.0...v1.3.0
 [1.2.0]: https://github.com/php-fast-forward/http-message/compare/v1.1.0...v1.2.0
