@@ -180,3 +180,12 @@ Feel free to open a [GitHub Issue](https://github.com/php-fast-forward/http-mess
 - [PSR-7](https://www.php-fig.org/psr/psr-7/)
 - [PSR-15](https://www.php-fig.org/psr/psr-15/)
 - [nyholm/psr7](https://github.com/Nyholm/psr7)
+
+## Consumer agent skill
+
+The package includes [fast-forward-http-message](resources/skills/fast-forward-http-message/SKILL.md) for application integration.
+It supports `fast-forward/http-message:^1.5`; inspect the installed version.
+See [skill installation and lifecycle](resources/skills/fast-forward-http-message/references/installation.md) for
+optional project synchronization with `llm/skills ^1.15`, guarded manual
+project/global copies and a pinned Skills CLI alternative. Shipping files does
+not install tooling or activate the skill in an agent session.
