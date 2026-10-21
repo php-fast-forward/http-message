@@ -268,7 +268,7 @@ enum Authorization: string
         $parts  = explode(',', $credentials);
 
         foreach ($parts as $part) {
-            $part = mb_trim($part);
+            $part = trim($part, " \t");
 
             $pattern = '/^(?<key>[a-zA-Z0-9_-]+)=(?<value>"[^"]*"|[^"]*)$/i';
 
@@ -276,8 +276,8 @@ enum Authorization: string
                 return null;
             }
 
-            $key          = mb_strtolower($match['key']);
-            $value        = mb_trim($match['value'], '"');
+            $key          = strtolower($match['key']);
+            $value        = trim($match['value'], '"');
             $params[$key] = $value;
         }
 
@@ -323,7 +323,7 @@ enum Authorization: string
         $parts  = explode(',', $credentials);
 
         foreach ($parts as $part) {
-            $part = mb_trim($part);
+            $part = trim($part, " \t");
 
             $pattern = '/^(?<key>[a-zA-Z0-9_-]+)=(?<value>[^, ]+)$/';
 
@@ -331,8 +331,8 @@ enum Authorization: string
                 return null;
             }
 
-            $key          = mb_trim($match['key']);
-            $value        = mb_trim($match['value']);
+            $key          = trim($match['key'], " \t");
+            $value        = trim($match['value'], " \t");
             $params[$key] = $value;
         }
 

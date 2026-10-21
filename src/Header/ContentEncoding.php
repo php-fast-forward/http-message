@@ -128,13 +128,13 @@ enum ContentEncoding: string
 
         if (preg_match_all($pattern, $acceptEncodingHeader, $matches, \PREG_SET_ORDER)) {
             foreach ($matches as $match) {
-                $name                               = mb_trim($match['name']);
-                $q                                  = isset($match['q']) && '' !== $match['q'] ? (float) $match['q'] : 1.0;
-                $preferences[mb_strtolower($name)] = $q;
+                $name                           = trim($match['name'], " \t");
+                $q                              = isset($match['q']) && '' !== $match['q'] ? (float) $match['q'] : 1.0;
+                $preferences[strtolower($name)] = $q;
             }
         }
 
-        $encodingName = mb_strtolower($encoding->value);
+        $encodingName = strtolower($encoding->value);
         $aliases      = self::getAliases($encoding);
 
         $checkNames = [$encodingName, ...$aliases];

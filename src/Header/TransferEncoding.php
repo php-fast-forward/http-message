@@ -112,7 +112,10 @@ enum TransferEncoding: string
             return false;
         }
 
-        $codings = array_map(\mb_trim(...), explode(',', mb_strtolower($transferEncodingHeader)));
+        $codings = array_map(
+            static fn (string $coding): string => trim($coding, " \t"),
+            explode(',', strtolower($transferEncodingHeader)),
+        );
 
         return \in_array(self::Chunked->value, $codings, true);
     }

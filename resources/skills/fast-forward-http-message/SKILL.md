@@ -61,7 +61,7 @@ This library uses `FastForward\Http\Message`; no container/provider is required.
 
 JsonResponse sets an application/json Content-Type with charset and uses JsonStream. withPayload returns a new stream/response, but PSR-7 streams can themselves be mutable: do not treat a shared stream's cursor or write() as an immutable payload update. Top-level resources raise InvalidArgumentException; malformed UTF-8 and other JSON encoding failures raise JsonException. Keep the original response when testing mutation boundaries.
 
-TextResponse and HtmlResponse set their corresponding content types, EmptyResponse is 204, RedirectResponse uses 302 or 301 for its permanent flag. RequestMethod/StatusCode and Header helpers are independent utilities. Authorization::parse returns null for missing/unknown or malformed supported credentials; parsing is not authentication. Never log credentials. Digest/AWS parsing uses mb_trim, which is native only from PHP 8.4: on PHP 8.3 install an appropriate polyfill before using those optional routes. The core JSON example needs no such route.
+TextResponse and HtmlResponse set their corresponding content types, EmptyResponse is 204, RedirectResponse uses 302 or 301 for its permanent flag. RequestMethod/StatusCode and Header helpers are independent utilities. Authorization::parse returns null for missing/unknown or malformed supported credentials; parsing is not authentication. Never log credentials. Header parsing uses ASCII HTTP whitespace (SP and HTAB) and token case folding; no mbstring extension or PHP 8.4 polyfill is required. Credential values retain their original bytes. Older installed versions may still call mb_trim; inspect their source before using those routes on PHP 8.3.
 
 ## Verify integration
 
