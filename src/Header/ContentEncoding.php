@@ -128,7 +128,7 @@ enum ContentEncoding: string
         }
 
         $preferences = [];
-        $pattern     = '/(?<name>[a-z*-]+)(?:;\s*q=(?<q>[0-9.]+))?/i';
+        $pattern     = '/(?<name>[a-z*-]+)(?:[ \t]*;[ \t]*q=(?<q>[0-9.]+))?/i';
 
         if (preg_match_all($pattern, $acceptEncodingHeader, $matches, \PREG_SET_ORDER)) {
             foreach ($matches as $match) {

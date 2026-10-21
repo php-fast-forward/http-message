@@ -83,6 +83,8 @@ final class ContentEncodingTest extends TestCase
     public static function providerIsSupported(): array
     {
         return [
+            'space before quality exclusion' => [ContentEncoding::Gzip, 'gzip ;q=0', false],
+            'tab before quality exclusion' => [ContentEncoding::Gzip, "gzip\t; q=0", false],
             'explicitly accepted'                             => [ContentEncoding::Gzip, 'gzip, deflate, br', true],
             'another explicitly accepted'                     => [ContentEncoding::Brotli, 'gzip, deflate, br', true],
             'explicitly rejected'                             => [

@@ -61,13 +61,7 @@ enum Accept: string
         $bestSpecificity = -1;
 
         foreach ($supportedTypes as $supported) {
-            $effective = null;
-            foreach ($clientPreferences as $preference) {
-                if (self::matches($preference['type'], $supported->value)
-                    && (null === $effective || $preference['specificity'] > $effective['specificity'])) {
-                    $effective = $preference;
-                }
-            }
+            $effective = self::findEffectivePreference($clientPreferences, $supported->value);
 
             if (null !== $effective && $effective['q'] > 0.0
                 && ($effective['q'] > $bestQuality
@@ -79,6 +73,26 @@ enum Accept: string
         }
 
         return $bestMatch;
+    }
+
+    /**
+     * Finds the most specific applicable range before considering its quality.
+     *
+     * @param array<int, array{type: string, q: float, specificity: int}> $preferences
+     *
+     * @return array{type: string, q: float, specificity: int}|null
+     */
+    private static function findEffectivePreference(array $preferences, string $supported): ?array
+    {
+        $effective = null;
+        foreach ($preferences as $preference) {
+            if (self::matches($preference['type'], $supported)
+                && (null === $effective || $preference['specificity'] > $effective['specificity'])) {
+                $effective = $preference;
+            }
+        }
+
+        return $effective;
     }
 
     /**
