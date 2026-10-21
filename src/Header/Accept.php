@@ -40,7 +40,8 @@ enum Accept: string
      * Determines the best matching content type from the client's Accept header.
      *
      * This method SHALL apply proper HTTP content negotiation rules, including:
-     * - Quality factors (q-values), which MUST be sorted in descending order.
+     * - The most specific matching range determines each representation's quality.
+     * - Zero-quality representations are excluded before ranking by quality.
      * - Specificity preference, where more explicit types MUST be preferred over
      *   wildcard types when q-values are equal.
      * If a match cannot be found in the list of supported server types,
@@ -55,62 +56,70 @@ enum Accept: string
     {
         $clientPreferences = self::parseHeader($acceptHeader);
 
-        foreach ($clientPreferences as $preference) {
-            foreach ($supportedTypes as $supported) {
-                if (self::matches($preference['type'], $supported->value)) {
-                    return $supported;
+        $bestMatch = null;
+        $bestQuality = 0.0;
+        $bestSpecificity = -1;
+
+        foreach ($supportedTypes as $supported) {
+            $effective = null;
+            foreach ($clientPreferences as $preference) {
+                if (self::matches($preference['type'], $supported->value)
+                    && (null === $effective || $preference['specificity'] > $effective['specificity'])) {
+                    $effective = $preference;
                 }
+            }
+
+            if (null !== $effective && $effective['q'] > 0.0
+                && ($effective['q'] > $bestQuality
+                    || ($effective['q'] === $bestQuality && $effective['specificity'] > $bestSpecificity))) {
+                $bestMatch = $supported;
+                $bestQuality = $effective['q'];
+                $bestSpecificity = $effective['specificity'];
             }
         }
 
-        return null;
+        return $bestMatch;
     }
 
     /**
-     * Parses the Accept header string into a sorted list of client preferences.
-     *
-     * This method MUST:
-     * - Extract MIME types from the header string.
-     * - Parse quality factors (q-values), defaulting to 1.0 when omitted.
-     * - Calculate specificity, which SHALL be used as a secondary sort criterion.
-     * - Sort results by descending q-value and descending specificity.
-     * The resulting array MUST represent the client’s explicit and wildcard
-     * preferences in the correct HTTP negotiation order.
-     *
-     * @param string $header the raw Accept header string
+     * Parses media ranges in field order. These enum cases represent bare media
+     * types, so ranges requiring media parameters do not match them.
      *
      * @return array<int, array{type: string, q: float, specificity: int}>
      */
     private static function parseHeader(string $header): array
     {
         $preferences = [];
+        $ranges = preg_split('/,(?=(?:[^"]*"[^"]*")*[^"]*$)/', $header);
 
-        // Captures a type and optional q-value while ignoring other parameters.
-        $pattern = '/(?<type>[^,;]+)(?:;[^,]*q=(?<q>[0-9.]+))?/';
+        foreach ($ranges as $range) {
+            $parts = explode(';', $range);
+            $type = strtolower(trim(array_shift($parts), " \t"));
+            $q = 1.0;
+            $hasMediaParameters = false;
 
-        if (preg_match_all($pattern, $header, $matches, \PREG_SET_ORDER)) {
-            foreach ($matches as $match) {
-                $type = trim($match['type'], " \t");
-                $q    = isset($match['q']) && '' !== $match['q'] ? (float) $match['q'] : 1.0;
+            foreach ($parts as $parameter) {
+                [$name, $value] = array_pad(explode('=', $parameter, 2), 2, '');
+                if ('q' === strtolower(trim($name, " \t"))) {
+                    $value = trim($value, " \t");
+                    if (!preg_match('/^(?:0(?:\.[0-9]{0,3})?|1(?:\.0{0,3})?)$/D', $value)) {
+                        continue 2;
+                    }
+                    $q = (float) $value;
+                    break;
+                } elseif ('' !== trim($name, " \t")) {
+                    $hasMediaParameters = true;
+                }
+            }
 
+            if (!$hasMediaParameters) {
                 $preferences[] = [
-                    'type'        => $type,
-                    'q'           => $q,
+                    'type' => $type,
+                    'q' => $q,
                     'specificity' => self::calculateSpecificity($type),
                 ];
             }
         }
-
-        usort(
-            $preferences,
-            static function (array $a, array $b): int {
-                if ($a['q'] !== $b['q']) {
-                    return $b['q'] <=> $a['q'];
-                }
-
-                return $b['specificity'] <=> $a['specificity'];
-            }
-        );
 
         return $preferences;
     }

@@ -122,7 +122,13 @@ enum Authorization: string
 
         [$scheme, $credentials] = $parts;
 
-        $authScheme = self::tryFrom($scheme);
+        $authScheme = null;
+        foreach (self::cases() as $candidate) {
+            if (0 === strcasecmp($candidate->value, $scheme)) {
+                $authScheme = $candidate;
+                break;
+            }
+        }
         if (null === $authScheme) {
             return null;
         }

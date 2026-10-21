@@ -113,16 +113,20 @@ enum ContentEncoding: string
      * - Support wildcards (“*”) as fallback.
      * - Recognize “x-gzip” as an alias for the gzip encoding.
      * If an encoding is not explicitly listed and no wildcard is present,
-     * the encoding SHOULD be considered acceptable unless the header
-     * exclusively lists explicit rejections.
+     * only identity is acceptable. Pass null for an absent header (all codings
+     * allowed); an empty string represents a present empty header (identity only).
      *
      * @param self $encoding the encoding to evaluate
-     * @param string $acceptEncodingHeader the raw `Accept-Encoding` header value
+     * @param string|null $acceptEncodingHeader the raw `Accept-Encoding` header value
      *
      * @return bool true if the encoding is acceptable according to negotiation rules
      */
-    public static function isSupported(self $encoding, string $acceptEncodingHeader): bool
+    public static function isSupported(self $encoding, ?string $acceptEncodingHeader): bool
     {
+        if (null === $acceptEncodingHeader) {
+            return true;
+        }
+
         $preferences = [];
         $pattern     = '/(?<name>[a-z*-]+)(?:;\s*q=(?<q>[0-9.]+))?/i';
 
@@ -149,7 +153,7 @@ enum ContentEncoding: string
             return $preferences['*'] > 0.0;
         }
 
-        return true;
+        return self::Identity === $encoding;
     }
 
     /**
