@@ -90,7 +90,7 @@ enum Accept: string
     private static function parseHeader(string $header): array
     {
         $preferences = [];
-        $ranges = preg_split('/,(?=(?:[^"]*"[^"]*")*[^"]*$)/', $header);
+        $ranges = self::splitRanges($header);
 
         foreach ($ranges as $range) {
             $parts = explode(';', $range);
@@ -122,6 +122,39 @@ enum Accept: string
         }
 
         return $preferences;
+    }
+
+    /**
+     * Splits only list commas outside quoted strings, honoring quoted-pair escapes.
+     *
+     * @return list<string>
+     */
+    private static function splitRanges(string $header): array
+    {
+        $ranges = [];
+        $start = 0;
+        $quoted = false;
+        $escaped = false;
+        $length = strlen($header);
+
+        for ($index = 0; $index < $length; ++$index) {
+            $character = $header[$index];
+            if ($escaped) {
+                $escaped = false;
+                continue;
+            }
+            if ($quoted && '\\' === $character) {
+                $escaped = true;
+            } elseif ('"' === $character) {
+                $quoted = !$quoted;
+            } elseif (',' === $character && !$quoted) {
+                $ranges[] = substr($header, $start, $index - $start);
+                $start = $index + 1;
+            }
+        }
+
+        $ranges[] = substr($header, $start);
+        return $ranges;
     }
 
     /**

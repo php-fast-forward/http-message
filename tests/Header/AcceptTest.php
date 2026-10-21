@@ -70,6 +70,8 @@ final class AcceptTest extends TestCase
 
         return [
             'legacy extension does not override quality' => ['text/html;q=0.5;note="a;q=0", application/json;q=0.2', $allSupported, Accept::TextHtml],
+            'escaped quote in other range does not suppress json' => ['application/json, text/html;profile="a\"b"', [Accept::ApplicationJson], Accept::ApplicationJson],
+            'escaped backslash before closing quote' => ['text/html;profile="a\\\\", application/json', [Accept::ApplicationJson], Accept::ApplicationJson],
             'uppercase media type' => ['APPLICATION/JSON', $allSupported, Accept::ApplicationJson],
             'equal quality favors specific representation' => ['*/*;q=0.5, text/html;q=0.5', $allSupported, Accept::TextHtml],
             'quoted comma parameter is not a new range' => ['text/html;profile="a,application/json"', $allSupported, null],
