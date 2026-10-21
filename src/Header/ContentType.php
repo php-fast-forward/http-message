@@ -84,7 +84,7 @@ enum ContentType: string
      *
      * This method SHOULD be used when charset negotiation or validation is
      * required. If no charset is present, this method MUST return null. The
-     * extracted charset value SHALL be trimmed of surrounding whitespace.
+     * extracted charset value SHALL be trimmed of surrounding HTTP whitespace (SP and HTAB).
      *
      * @param string $contentTypeHeader the full Content-Type header value
      *
@@ -93,7 +93,7 @@ enum ContentType: string
     public static function getCharset(string $contentTypeHeader): ?string
     {
         if (preg_match('/charset=([^;]+)/i', $contentTypeHeader, $matches)) {
-            return mb_trim($matches[1]);
+            return trim($matches[1], " \t");
         }
 
         return null;

@@ -90,7 +90,7 @@ enum Accept: string
 
         if (preg_match_all($pattern, $header, $matches, \PREG_SET_ORDER)) {
             foreach ($matches as $match) {
-                $type = mb_trim($match['type']);
+                $type = trim($match['type'], " \t");
                 $q    = isset($match['q']) && '' !== $match['q'] ? (float) $match['q'] : 1.0;
 
                 $preferences[] = [
