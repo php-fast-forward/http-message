@@ -28,7 +28,7 @@ use Nyholm\Psr7\Response;
  * This class MUST be used when returning JSON payloads over HTTP responses.
  * It automatically sets the 'Content-Type' header to 'application/json' with the specified charset.
  *
- * @method PayloadStreamInterface getBody() Retrieves the response body as a JSON stream.
+ * A body replaced through PSR-7 withBody() may be any StreamInterface.
  */
 final class JsonResponse extends Response implements PayloadResponseInterface
 {
@@ -55,14 +55,34 @@ final class JsonResponse extends Response implements PayloadResponseInterface
     /**
      * Retrieves the payload contained in the response body.
      *
-     * This method MUST return the same payload provided during construction or via withPayload().
+     * Original payload streams return their stored payload. Generic readable,
+     * seekable streams are decoded as associative JSON without changing the cursor.
+     * Invalid JSON throws JsonException; unreadable, detached or non-seekable
+     * generic streams throw RuntimeException rather than being consumed.
+     *
+     * @throws \JsonException
+     * @throws \RuntimeException
      *
      * @return mixed the decoded JSON payload
      */
     public function getPayload(): mixed
     {
-        return $this->getBody()
-            ->getPayload();
+        $body = $this->getBody();
+        if ($body instanceof PayloadStreamInterface) {
+            return $body->getPayload();
+        }
+
+        if (!$body->isReadable() || !$body->isSeekable()) {
+            throw new \RuntimeException('A generic JSON body must be readable and seekable to retrieve its payload.');
+        }
+
+        $position = $body->tell();
+        try {
+            $body->rewind();
+            return json_decode($body->getContents(), true, 512, \JSON_THROW_ON_ERROR);
+        } finally {
+            $body->seek($position);
+        }
     }
 
     /**
@@ -78,6 +98,9 @@ final class JsonResponse extends Response implements PayloadResponseInterface
      */
     public function withPayload(mixed $payload): self
     {
-        return $this->withBody($this->getBody()->withPayload($payload));
+        $body = $this->getBody();
+        return $this->withBody(
+            $body instanceof PayloadStreamInterface ? $body->withPayload($payload) : new JsonStream($payload)
+        );
     }
 }
