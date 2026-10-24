@@ -149,6 +149,11 @@ final class AuthorizationTest extends TestCase
         }
     }
 
+    /**
+     * Supplies authorization headers and their expected parsed credentials.
+     *
+     * @return array
+     */
     public static function providerParse(): array
     {
         return [

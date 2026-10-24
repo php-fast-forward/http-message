@@ -10,6 +10,11 @@ use PHPUnit\Framework\TestCase;
 #[CoversNothing]
 final class HeaderRuntimeCompatibilityTest extends TestCase
 {
+    /**
+     * Verifies header parsing in an isolated production-style PHP process.
+     *
+     * @return void
+     */
     public function testHeadersWithoutDevelopmentPolyfillsOrMbstringFunctions(): void
     {
         $process = proc_open([

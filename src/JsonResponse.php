@@ -19,7 +19,9 @@ declare(strict_types=1);
 namespace FastForward\Http\Message;
 
 use FastForward\Http\Message\Header\ContentType;
+use JsonException;
 use Nyholm\Psr7\Response;
+use RuntimeException;
 
 /**
  * Class JsonResponse.
@@ -60,10 +62,10 @@ final class JsonResponse extends Response implements PayloadResponseInterface
      * Invalid JSON throws JsonException; unreadable, detached or non-seekable
      * generic streams throw RuntimeException rather than being consumed.
      *
-     * @throws \JsonException
-     * @throws \RuntimeException
-     *
      * @return mixed the decoded JSON payload
+     *
+     * @throws JsonException
+     * @throws RuntimeException
      */
     public function getPayload(): mixed
     {
@@ -73,7 +75,7 @@ final class JsonResponse extends Response implements PayloadResponseInterface
         }
 
         if (!$body->isReadable() || !$body->isSeekable()) {
-            throw new \RuntimeException('A generic JSON body must be readable and seekable to retrieve its payload.');
+            throw new RuntimeException('A generic JSON body must be readable and seekable to retrieve its payload.');
         }
 
         $position = $body->tell();

@@ -18,16 +18,20 @@ declare(strict_types=1);
 
 namespace FastForward\Http\Message\Tests;
 
-use PHPUnit\Framework\Attributes\Test;
 use FastForward\Http\Message\Header\ContentType;
 use FastForward\Http\Message\JsonResponse;
 use FastForward\Http\Message\JsonStream;
 use FastForward\Http\Message\PayloadResponseInterface;
 use FastForward\Http\Message\PayloadStreamInterface;
+use JsonException;
+use Nyholm\Psr7\Stream;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
+use Psr\Http\Message\StreamInterface;
+use RuntimeException;
 
 /**
  * @internal
@@ -132,11 +136,16 @@ final class JsonResponseTest extends TestCase
         ];
     }
 
+    /**
+     * Decodes replacement JSON while preserving the stream cursor and identity.
+     *
+     * @return void
+     */
     #[Test]
     public function genericJsonBodyIsDecodedWithoutMovingItsCursor(): void
     {
         $original = new JsonResponse(['original' => true]);
-        $stream = \Nyholm\Psr7\Stream::create('{"replacement":true}');
+        $stream = Stream::create('{"replacement":true}');
         $stream->seek(5);
         $replacement = $original->withBody($stream);
 
@@ -148,56 +157,81 @@ final class JsonResponseTest extends TestCase
         self::assertSame($stream, $replacement->getBody());
     }
 
+    /**
+     * Preserves the cursor on invalid JSON and permits replacing the payload.
+     *
+     * @return void
+     */
     #[Test]
     public function invalidGenericBodyHasAnExplicitJsonErrorAndRemainsReplaceable(): void
     {
-        $stream = \Nyholm\Psr7\Stream::create('not json');
+        $stream = Stream::create('not json');
         $stream->seek(2);
         $response = (new JsonResponse())->withBody($stream);
         self::assertSame(['recovered' => true], $response->withPayload(['recovered' => true])->getPayload());
         try {
             $response->getPayload();
             self::fail('Invalid JSON must not be silently accepted.');
-        } catch (\JsonException) {
+        } catch (JsonException) {
             self::assertSame(2, $stream->tell());
         }
     }
 
+    /**
+     * Reports a detached stream and permits replacing its payload.
+     *
+     * @return void
+     */
     #[Test]
     public function detachedGenericBodyHasAnExplicitStreamErrorAndRemainsReplaceable(): void
     {
-        $stream = \Nyholm\Psr7\Stream::create('{}');
+        $stream = Stream::create('{}');
         fclose($stream->detach());
         $response = (new JsonResponse())->withBody($stream);
         self::assertSame('recovered', $response->withPayload('recovered')->getPayload());
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $response->getPayload();
     }
 
+    /**
+     * Decodes a valid JSON null without treating it as a parse error.
+     *
+     * @return void
+     */
     #[Test]
     public function genericJsonNullIsNotConfusedWithInvalidJson(): void
     {
-        $response = (new JsonResponse())->withBody(\Nyholm\Psr7\Stream::create('null'));
+        $response = (new JsonResponse())->withBody(Stream::create('null'));
         self::assertNull($response->getPayload());
     }
 
+    /**
+     * Rejects a non-seekable body without consuming it.
+     *
+     * @return void
+     */
     #[Test]
     public function nonSeekableGenericBodyIsNotConsumed(): void
     {
-        $body = $this->createMock(\Psr\Http\Message\StreamInterface::class);
+        $body = $this->createMock(StreamInterface::class);
         $body->method('isReadable')->willReturn(true);
         $body->method('isSeekable')->willReturn(false);
         $body->expects(self::never())->method('getContents');
         $response = (new JsonResponse())->withBody($body);
         self::assertSame(['new' => true], $response->withPayload(['new' => true])->getPayload());
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $response->getPayload();
     }
 
+    /**
+     * Preserves stream encoding options and headers when replacing the payload.
+     *
+     * @return void
+     */
     #[Test]
     public function payloadReplacementPreservesExistingJsonStreamEncodingOptionsAndHeaders(): void
     {
-        $stream = new \FastForward\Http\Message\JsonStream(['old' => true], \JSON_PRETTY_PRINT);
+        $stream = new JsonStream(['old' => true], \JSON_PRETTY_PRINT);
         $response = (new JsonResponse([], 'iso-8859-1'))->withBody($stream);
         $updated = $response->withPayload(['new' => true]);
         self::assertStringContainsString("\n", (string) $updated->getBody());
