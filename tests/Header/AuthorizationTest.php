@@ -128,8 +128,27 @@ final class AuthorizationTest extends TestCase
     }
 
     /**
-     * @return array
+     * Scheme capitalization must never alter opaque credential bytes.
      */
+    #[DataProvider('providerParse')]
+    public function testSchemeCaseDoesNotChangeCredentials(string $header, ?array $expected): void
+    {
+        if (null === $expected) {
+            self::assertNull(Authorization::parse($header));
+            return;
+        }
+
+        [$scheme, $credentials] = explode(' ', $header, 2);
+        $mixed = match ($scheme) {
+            'Basic' => 'bAsIc',
+            'Bearer' => 'bEaReR',
+            default => lcfirst($scheme),
+        };
+        foreach ([strtolower($scheme), strtoupper($scheme), ucfirst(strtolower($scheme)), $mixed] as $variant) {
+            $this->testParse($variant . ' ' . $credentials, $expected);
+        }
+    }
+
     public static function providerParse(): array
     {
         return [

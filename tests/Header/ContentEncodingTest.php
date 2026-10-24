@@ -54,7 +54,7 @@ final class ContentEncodingTest extends TestCase
     #[Test]
     public function isSupportedWithEncodingAndHeaderWillReturnExpected(
         ContentEncoding $encoding,
-        string $header,
+        ?string $header,
         bool $expected
     ): void {
         self::assertSame($expected, ContentEncoding::isSupported($encoding, $header));
@@ -83,6 +83,8 @@ final class ContentEncodingTest extends TestCase
     public static function providerIsSupported(): array
     {
         return [
+            'space before quality exclusion' => [ContentEncoding::Gzip, 'gzip ;q=0', false],
+            'tab before quality exclusion' => [ContentEncoding::Gzip, "gzip\t; q=0", false],
             'explicitly accepted'                             => [ContentEncoding::Gzip, 'gzip, deflate, br', true],
             'another explicitly accepted'                     => [ContentEncoding::Brotli, 'gzip, deflate, br', true],
             'explicitly rejected'                             => [
@@ -98,8 +100,14 @@ final class ContentEncodingTest extends TestCase
             ],
             'not mentioned but wildcard accepts'              => [ContentEncoding::Brotli, 'gzip, *;q=0.5', true],
             'not mentioned and wildcard rejects'              => [ContentEncoding::Brotli, 'gzip, *;q=0', false],
-            'not mentioned and no wildcard (implicit accept)' => [ContentEncoding::Deflate, 'gzip, br', true],
-            'empty header (implicit accept)'                  => [ContentEncoding::Gzip, '', true],
+            'unlisted coding is not accepted' => [ContentEncoding::Deflate, 'gzip, br', false],
+            'empty header rejects compression' => [ContentEncoding::Gzip, '', false],
+            'missing header allows compression' => [ContentEncoding::Gzip, null, true],
+            'empty header accepts identity' => [ContentEncoding::Identity, '', true],
+            'wildcard rejects identity' => [ContentEncoding::Identity, '*;q=0', false],
+            'explicit identity overrides wildcard rejection' => [ContentEncoding::Identity, 'identity;q=0.5, *;q=0', true],
+            'explicit exclusion overrides wildcard acceptance' => [ContentEncoding::Gzip, 'gzip;q=0, *;q=1', false],
+            'case insensitive quality name' => [ContentEncoding::Gzip, 'GZIP;Q=0', false],
             'wildcard only'                                   => [ContentEncoding::Zstd, '*', true],
             'identity is always accepted unless q=0'          => [ContentEncoding::Identity, 'gzip, br', true],
             'identity explicitly rejected'                    => [ContentEncoding::Identity, 'identity;q=0', false],
