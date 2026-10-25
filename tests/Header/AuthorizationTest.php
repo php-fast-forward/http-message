@@ -135,6 +135,7 @@ final class AuthorizationTest extends TestCase
     {
         if (null === $expected) {
             self::assertNull(Authorization::parse($header));
+
             return;
         }
 

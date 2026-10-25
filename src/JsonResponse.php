@@ -74,13 +74,14 @@ final class JsonResponse extends Response implements PayloadResponseInterface
             return $body->getPayload();
         }
 
-        if (!$body->isReadable() || !$body->isSeekable()) {
+        if (! $body->isReadable() || ! $body->isSeekable()) {
             throw new RuntimeException('A generic JSON body must be readable and seekable to retrieve its payload.');
         }
 
         $position = $body->tell();
         try {
             $body->rewind();
+
             return json_decode($body->getContents(), true, 512, \JSON_THROW_ON_ERROR);
         } finally {
             $body->seek($position);
@@ -101,6 +102,7 @@ final class JsonResponse extends Response implements PayloadResponseInterface
     public function withPayload(mixed $payload): self
     {
         $body = $this->getBody();
+
         return $this->withBody(
             $body instanceof PayloadStreamInterface ? $body->withPayload($payload) : new JsonStream($payload)
         );

@@ -18,11 +18,14 @@ final class HeaderRuntimeCompatibilityTest extends TestCase
     public function testHeadersWithoutDevelopmentPolyfillsOrMbstringFunctions(): void
     {
         $process = proc_open([
-            PHP_BINARY,
+            \PHP_BINARY,
             '-d',
             'disable_functions=mb_trim,mb_strtolower',
             __DIR__ . '/fixtures/header-runtime.php',
-        ], [1 => ['pipe', 'w'], 2 => ['pipe', 'w']], $pipes);
+        ], [
+            1 => ['pipe', 'w'],
+            2 => ['pipe', 'w'],
+        ], $pipes);
         self::assertIsResource($process);
 
         $output = stream_get_contents($pipes[1]);

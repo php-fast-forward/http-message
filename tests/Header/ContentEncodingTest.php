@@ -105,7 +105,11 @@ final class ContentEncodingTest extends TestCase
             'missing header allows compression' => [ContentEncoding::Gzip, null, true],
             'empty header accepts identity' => [ContentEncoding::Identity, '', true],
             'wildcard rejects identity' => [ContentEncoding::Identity, '*;q=0', false],
-            'explicit identity overrides wildcard rejection' => [ContentEncoding::Identity, 'identity;q=0.5, *;q=0', true],
+            'explicit identity overrides wildcard rejection' => [
+                ContentEncoding::Identity,
+                'identity;q=0.5, *;q=0',
+                true,
+            ],
             'explicit exclusion overrides wildcard acceptance' => [ContentEncoding::Gzip, 'gzip;q=0, *;q=1', false],
             'case insensitive quality name' => [ContentEncoding::Gzip, 'GZIP;Q=0', false],
             'wildcard only'                                   => [ContentEncoding::Zstd, '*', true],
