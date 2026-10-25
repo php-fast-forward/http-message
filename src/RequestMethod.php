@@ -30,34 +30,54 @@ namespace FastForward\Http\Message;
  */
 enum RequestMethod: string
 {
-    /** The HEAD method requests the headers for a given resource without the response body. */
+    /**
+     * The HEAD method requests the headers for a given resource without the response body.
+     */
     case Head = 'HEAD';
 
-    /** The GET method requests a representation of the specified resource. It MUST NOT have side-effects. */
+    /**
+     * The GET method requests a representation of the specified resource. It MUST NOT have side-effects.
+     */
     case Get = 'GET';
 
-    /** The POST method submits data to be processed, often causing a change in state or side-effects. */
+    /**
+     * The POST method submits data to be processed, often causing a change in state or side-effects.
+     */
     case Post = 'POST';
 
-    /** The PUT method replaces the target resource with the request payload. */
+    /**
+     * The PUT method replaces the target resource with the request payload.
+     */
     case Put = 'PUT';
 
-    /** The PATCH method applies partial modifications to the target resource. */
+    /**
+     * The PATCH method applies partial modifications to the target resource.
+     */
     case Patch = 'PATCH';
 
-    /** The DELETE method removes the specified resource. */
+    /**
+     * The DELETE method removes the specified resource.
+     */
     case Delete = 'DELETE';
 
-    /** The PURGE method requests that a cached resource be removed, often used with proxy servers. */
+    /**
+     * The PURGE method requests that a cached resource be removed, often used with proxy servers.
+     */
     case Purge = 'PURGE';
 
-    /** The OPTIONS method describes the communication options for the target resource. */
+    /**
+     * The OPTIONS method describes the communication options for the target resource.
+     */
     case Options = 'OPTIONS';
 
-    /** The TRACE method performs a message loop-back test along the path to the target resource. */
+    /**
+     * The TRACE method performs a message loop-back test along the path to the target resource.
+     */
     case Trace = 'TRACE';
 
-    /** The CONNECT method establishes a tunnel to the target resource, often used with HTTPS proxies. */
+    /**
+     * The CONNECT method establishes a tunnel to the target resource, often used with HTTPS proxies.
+     */
     case Connect = 'CONNECT';
 
     /**

@@ -79,6 +79,7 @@ enum Accept: string
      * Finds the most specific applicable range before considering its quality.
      *
      * @param array<int, array{type: string, q: float, specificity: int}> $preferences
+     * @param string $supported
      *
      * @return array{type: string, q: float, specificity: int}|null
      */
@@ -99,6 +100,8 @@ enum Accept: string
      * Parses media ranges in field order. These enum cases represent bare media
      * types, so ranges requiring media parameters do not match them.
      *
+     * @param string $header
+     *
      * @return array<int, array{type: string, q: float, specificity: int}>
      */
     private static function parseHeader(string $header): array
@@ -116,17 +119,20 @@ enum Accept: string
                 [$name, $value] = array_pad(explode('=', $parameter, 2), 2, '');
                 if ('q' === strtolower(trim($name, " \t"))) {
                     $value = trim($value, " \t");
-                    if (!preg_match('/^(?:0(?:\.[0-9]{0,3})?|1(?:\.0{0,3})?)$/D', $value)) {
+                    if (! preg_match('/^(?:0(?:\.[0-9]{0,3})?|1(?:\.0{0,3})?)$/D', $value)) {
                         continue 2;
                     }
+
                     $q = (float) $value;
                     break;
-                } elseif ('' !== trim($name, " \t")) {
+                }
+
+                if ('' !== trim($name, " \t")) {
                     $hasMediaParameters = true;
                 }
             }
 
-            if (!$hasMediaParameters) {
+            if (! $hasMediaParameters) {
                 $preferences[] = [
                     'type' => $type,
                     'q' => $q,
@@ -141,6 +147,8 @@ enum Accept: string
     /**
      * Splits only list commas outside quoted strings, honoring quoted-pair escapes.
      *
+     * @param string $header
+     *
      * @return list<string>
      */
     private static function splitRanges(string $header): array
@@ -149,7 +157,7 @@ enum Accept: string
         $start = 0;
         $quoted = false;
         $escaped = false;
-        $length = strlen($header);
+        $length = \strlen($header);
 
         for ($index = 0; $index < $length; ++$index) {
             $character = $header[$index];
@@ -157,17 +165,19 @@ enum Accept: string
                 $escaped = false;
                 continue;
             }
+
             if ($quoted && '\\' === $character) {
                 $escaped = true;
             } elseif ('"' === $character) {
-                $quoted = !$quoted;
-            } elseif (',' === $character && !$quoted) {
+                $quoted = ! $quoted;
+            } elseif (',' === $character && ! $quoted) {
                 $ranges[] = substr($header, $start, $index - $start);
                 $start = $index + 1;
             }
         }
 
         $ranges[] = substr($header, $start);
+
         return $ranges;
     }
 
