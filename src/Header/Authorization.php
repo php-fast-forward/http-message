@@ -129,6 +129,7 @@ enum Authorization: string
                 break;
             }
         }
+
         if (null === $authScheme) {
             return null;
         }

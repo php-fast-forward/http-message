@@ -113,7 +113,7 @@ enum TransferEncoding: string
         }
 
         $codings = array_map(
-            static fn (string $coding): string => trim($coding, " \t"),
+            static fn(string $coding): string => trim($coding, " \t"),
             explode(',', strtolower($transferEncodingHeader)),
         );
 
