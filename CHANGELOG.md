@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.3] - 2026-11-11
+
+### Changed
+
+- GitHub Actions(deps): bump php-fast-forward/dev-tools/.github/workflows/wiki-direct.yml from 84e154046e07cafa6ac09a9e12434b1ff5dcb5e0 to 1d623bbe24c50b31ee808f84e0c701778ec225ac
+
+  Update dependencies: `php-fast-forward/dev-tools/.github/workflows/wiki-direct.yml`.
+
+  ([#21](https://github.com/php-fast-forward/http-message/pull/21), @dependabot[bot])
+
 ## [1.5.2] - 2026-10-25
 
 ### Changed
@@ -67,6 +77,7 @@ Release notes are unavailable for this version.
 
 Release notes are unavailable for this version.
 
+[1.5.3]: https://github.com/php-fast-forward/http-message/compare/v1.5.2...v1.5.3
 [1.5.2]: https://github.com/php-fast-forward/http-message/compare/v1.5.1...v1.5.2
 [1.5.1]: https://github.com/php-fast-forward/http-message/compare/v1.5.0...v1.5.1
 [1.5.0]: https://github.com/php-fast-forward/http-message/compare/v1.4.0...v1.5.0
